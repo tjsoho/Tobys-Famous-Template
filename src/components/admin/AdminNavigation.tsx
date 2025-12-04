@@ -144,26 +144,7 @@ const AdminNavigation = () => {
                     Back to Home
                 </Link>
 
-                {/* ************************************************************
-                    DROPDOWN TOGGLE BUTTON
-                ************************************************************ */}
-                <button
-                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    className="bg-brand-teal text-white px-4 py-3 rounded-full hover:bg-brand-teal/90 transition-colors duration-300 flex items-center gap-2"
-                    aria-label="Navigation menu"
-                >
-                    <span className="text-sm font-semibold">Quick Nav</span>
-                    <motion.svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        animate={{ rotate: isDropdownOpen ? 180 : 0 }}
-                        transition={{ duration: 0.2 }}
-                    >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </motion.svg>
-                </button>
+                
             </div>
 
             {/* ************************************************************

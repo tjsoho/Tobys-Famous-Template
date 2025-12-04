@@ -5,6 +5,7 @@ import EditableImage from "@/components/core/editable-image";
 import { EditableElement } from "@/components/core/input";
 import { HomePageContent, HomePageProps, AdditionalTile, AdditionalFAQ } from "@/app/_config";
 import useUpdatePage from "@/utils/hooks/useUpdatePage";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 export default function HomeAdminInputs(props: HomePageProps) {
 	const [heroImage, setHeroImage] = useState(
@@ -292,15 +293,16 @@ export default function HomeAdminInputs(props: HomePageProps) {
 			/>
 			<div className="min-h-screen bg-white">
 				<div className="max-w-7xl mx-auto px-4 py-4">
-					{/* ************************** Header Section **************************/}
-
-
-
-					{/* ***************************************************************
-					   HERO SECTION
-					****************************************************************/}
-					<section className="bg-brand-yellow/10 border border-brand-yellow/20 p-6 rounded-2xl mb-8">
-						<h2 className="text-xl text-brand-black font-bold mb-4">Hero Section</h2>
+					<Accordion type="multiple" className="space-y-8">
+						{/* ***************************************************************
+						   HERO SECTION
+						****************************************************************/}
+						<AccordionItem value="hero" className="bg-brand-yellow/10 border border-brand-yellow/20 p-6 rounded-2xl">
+							<AccordionTrigger className="text-xl text-brand-black font-bold hover:no-underline">
+								Hero Section
+							</AccordionTrigger>
+							<AccordionContent>
+								<section className="pt-4">
 
 						{/* Background Images */}
 						<div className="grid md:grid-cols-2 gap-6 mb-6">
@@ -430,15 +432,19 @@ export default function HomeAdminInputs(props: HomePageProps) {
 								/>
 							</div>
 						</div>
-					</section>
+								</section>
+							</AccordionContent>
+						</AccordionItem>
 
-					{/* ***************************************************************
-						SECTION 2: WHAT IS NOVATED LEASING
-					****************************************************************/}
-					<section className="bg-brand-teal/10 border border-brand-teal/20 p-8 rounded-2xl mb-12">
-						<h2 className="text-xl text-brand-black font-bold mb-4">
-							Section 2 - What is Novated Leasing
-						</h2>
+						{/* ***************************************************************
+							SECTION 2: WHAT IS NOVATED LEASING
+						****************************************************************/}
+						<AccordionItem value="section2" className="bg-brand-teal/10 border border-brand-teal/20 p-8 rounded-2xl">
+							<AccordionTrigger className="text-xl text-brand-black font-bold hover:no-underline">
+								Section 2 - What is Novated Leasing
+							</AccordionTrigger>
+							<AccordionContent>
+								<section className="pt-4">
 
 						<div className="space-y-6">
 							<div>
@@ -495,15 +501,19 @@ export default function HomeAdminInputs(props: HomePageProps) {
 								</p>
 							</div>
 						</div>
-					</section>
+								</section>
+							</AccordionContent>
+						</AccordionItem>
 
-					{/* ***************************************************************
-						SECTION 3: WHY CHOOSE BRIGHT LEASING TILES
-					****************************************************************/}
-					<section className="bg-brand-teal/10 border border-brand-teal/20 p-8 rounded-2xl mb-12">
-						<h2 className="text-xl text-brand-black font-bold mb-4">
-							Section 3 - Why Choose Bright Leasing
-						</h2>
+						{/* ***************************************************************
+							SECTION 3: WHY CHOOSE BRIGHT LEASING TILES
+						****************************************************************/}
+						<AccordionItem value="section3" className="bg-brand-teal/10 border border-brand-teal/20 p-8 rounded-2xl">
+							<AccordionTrigger className="text-xl text-brand-black font-bold hover:no-underline">
+								Section 3 - Why Choose Bright Leasing
+							</AccordionTrigger>
+							<AccordionContent>
+								<section className="pt-4">
 
 						<div className="space-y-6">
 							{/* Section Title */}
@@ -810,15 +820,19 @@ export default function HomeAdminInputs(props: HomePageProps) {
 								</button>
 							</div>
 						</div>
-					</section>
+								</section>
+							</AccordionContent>
+						</AccordionItem>
 
-					{/* ***************************************************************
-						SECTION 4: HOW IT WORKS
-					****************************************************************/}
-					<section className="bg-brand-teal/10 border border-brand-teal/20 p-8 rounded-2xl mb-12">
-						<h2 className="text-xl text-brand-black font-bold mb-4">
-							Section 4 - How It Works
-						</h2>
+						{/* ***************************************************************
+							SECTION 4: HOW IT WORKS
+						****************************************************************/}
+						<AccordionItem value="section4" className="bg-brand-teal/10 border border-brand-teal/20 p-8 rounded-2xl">
+							<AccordionTrigger className="text-xl text-brand-black font-bold hover:no-underline">
+								Section 4 - How It Works
+							</AccordionTrigger>
+							<AccordionContent>
+								<section className="pt-4">
 
 						<div className="space-y-6">
 							{/* Section Title */}
@@ -1107,15 +1121,19 @@ export default function HomeAdminInputs(props: HomePageProps) {
 								</div>
 							</div>
 						</div>
-					</section>
+								</section>
+							</AccordionContent>
+						</AccordionItem>
 
-					{/* ***************************************************************
-						SECTION 5: PROMOTIONAL BANNER
-					****************************************************************/}
-					<section className="bg-brand-teal/10 border border-brand-teal/20 p-8 rounded-2xl mb-12">
-						<h2 className="text-xl text-brand-black font-bold mb-4">
-							Section 5 - Promotional Banner
-						</h2>
+						{/* ***************************************************************
+							SECTION 5: PROMOTIONAL BANNER
+						****************************************************************/}
+						<AccordionItem value="section5" className="bg-brand-teal/10 border border-brand-teal/20 p-8 rounded-2xl">
+							<AccordionTrigger className="text-xl text-brand-black font-bold hover:no-underline">
+								Section 5 - Promotional Banner
+							</AccordionTrigger>
+							<AccordionContent>
+								<section className="pt-4">
 
 						<div className="space-y-6">
 							{/* Background Images */}
@@ -1257,15 +1275,19 @@ export default function HomeAdminInputs(props: HomePageProps) {
 								</div>
 							</div>
 						</div>
-					</section>
+								</section>
+							</AccordionContent>
+						</AccordionItem>
 
-					{/* ***************************************************************
-						SECTION 6: CUSTOMER SUCCESS STORIES
-					****************************************************************/}
-					<section className="bg-brand-teal/10 border border-brand-teal/20 p-8 rounded-2xl mb-12">
-						<h2 className="text-xl text-brand-black font-bold mb-4">
-							Section 6 - Customer Success Stories
-						</h2>
+						{/* ***************************************************************
+							SECTION 6: CUSTOMER SUCCESS STORIES
+						****************************************************************/}
+						<AccordionItem value="section6" className="bg-brand-teal/10 border border-brand-teal/20 p-8 rounded-2xl">
+							<AccordionTrigger className="text-xl text-brand-black font-bold hover:no-underline">
+								Section 6 - Customer Success Stories
+							</AccordionTrigger>
+							<AccordionContent>
+								<section className="pt-4">
 
 						<div className="space-y-6">
 							{/* Section Title */}
@@ -1572,15 +1594,19 @@ export default function HomeAdminInputs(props: HomePageProps) {
 								</button>
 							</div>
 						</div>
-					</section>
+								</section>
+							</AccordionContent>
+						</AccordionItem>
 
-					{/* ***************************************************************
-						SECTION 7: FAQ ACCORDION
-					****************************************************************/}
-					<section className="bg-brand-teal/10 border border-brand-teal/20 p-8 rounded-2xl mb-12">
-						<h2 className="text-xl text-brand-black font-bold mb-4">
-							Section 7 - FAQ Accordion
-						</h2>
+						{/* ***************************************************************
+							SECTION 7: FAQ ACCORDION
+						****************************************************************/}
+						<AccordionItem value="section7" className="bg-brand-teal/10 border border-brand-teal/20 p-8 rounded-2xl">
+							<AccordionTrigger className="text-xl text-brand-black font-bold hover:no-underline">
+								Section 7 - FAQ Accordion
+							</AccordionTrigger>
+							<AccordionContent>
+								<section className="pt-4">
 
 						<div className="space-y-6">
 							{/* Section Title */}
@@ -1917,7 +1943,10 @@ export default function HomeAdminInputs(props: HomePageProps) {
 								</button>
 							</div>
 						</div>
-					</section>
+								</section>
+							</AccordionContent>
+						</AccordionItem>
+					</Accordion>
 
 					{/* ***************************************************************
 						SECTION 1: FEATURES

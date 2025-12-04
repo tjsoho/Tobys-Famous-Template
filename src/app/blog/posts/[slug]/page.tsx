@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ArrowLeft, Calendar, User } from "lucide-react";
 import Image from "next/image";
 import MobileBlogHero from "@/components/blog/MobileBlogHero";
+import { buildPostMetadata } from "@/utils/seo";
 
 export default async function Post(props: Params) {
 	const params = await props.params;
@@ -168,15 +169,16 @@ export async function generateMetadata(props: Params): Promise<Metadata> {
 		return notFound();
 	}
 
-	const title = `${post.title}`;
-
-	return {
-		title,
-		description: post.excerpt,
-		openGraph: {
-			title,
-			description: post.excerpt,
-			images: [post.cover_image || ""],
+	return buildPostMetadata(
+		{
+			title: post.title,
+			excerpt: post.excerpt,
+			meta_title: post.meta_title,
+			meta_description: post.meta_description,
+			keywords: post.keywords,
+			slug: post.slug,
+			cover_image: post.cover_image,
 		},
-	};
+		"/blog/posts"
+	);
 }

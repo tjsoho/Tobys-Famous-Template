@@ -6,9 +6,18 @@
 /* ************************************************************
                         IMPORTS
 ************************************************************ */
+import type { Metadata } from "next";
 import { contactPageFallbackData, ContactPageProps } from "@/app/_config";
 import getPage from "@/server-actions/page";
 import ContactClient from "./ContactClient";
+import { buildPageMetadata } from "@/utils/seo";
+
+/* ************************************************************
+                        METADATA
+************************************************************ */
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata("contact");
+}
 
 /* ************************************************************
                         COMPONENTS

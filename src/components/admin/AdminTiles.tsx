@@ -139,6 +139,13 @@ const AdminTiles = () => {
             description: "Manage terms of use content",
             color: "bg-brand-teal text-white"
         },
+        {
+            href: "/admin/seo",
+            icon: "🔍",
+            title: "SEO",
+            description: "Manage SEO metadata for all pages",
+            color: "bg-brand-yellow text-brand-black"
+        },
 
     ];
 

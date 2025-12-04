@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import getPage from "@/server-actions/page";
 import { homePageFallbackData, HomePageProps } from "./_config";
 import Hero from "../components/Home/Hero";
@@ -7,10 +8,15 @@ import Section5 from "../components/Home/Section5";
 import Section4 from "@/components/Home/Section4";
 import Section6 from "@/components/Home/Section6";
 import Section7 from "@/components/Home/Section7";
+import { buildPageMetadata } from "@/utils/seo";
 
 // Disable caching for this page to ensure fresh content
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
+
+export async function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata("home");
+}
 export default async function Home() {
 	const homePage = await getPage<HomePageProps>("home", homePageFallbackData);
 

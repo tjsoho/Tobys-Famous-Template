@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import HeaderWrapper from "@/components/core/HeaderWrapper";
@@ -15,10 +14,7 @@ const geistMono = Geist_Mono({
 	subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-	title: "Client Website",
-	description: "Client Website",
-};
+// Metadata is now generated dynamically per page via generateMetadata()
 
 export default function RootLayout({
 	children,
@@ -28,6 +24,11 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<head>
+				{/* Robots meta tag with all directives combined */}
+				<meta
+					name="robots"
+					content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+				/>
 				<script dangerouslySetInnerHTML={{ __html: `window.__clipara = {};window.__clipara.organisationId = 1666;` }} />
 				<script defer src="https://widget.getclipara.com/widget.js" type="text/javascript" />
 			</head>

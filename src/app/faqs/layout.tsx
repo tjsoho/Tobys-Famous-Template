@@ -2,13 +2,14 @@ import type { Metadata } from "next";
 import { buildPageMetadata } from "@/utils/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
-  return buildPageMetadata("about");
+  return buildPageMetadata("faqs");
 }
 
-export default function AboutLayout({
+export default function FAQsLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
-  return <div>{children}</div>;
+}) {
+  return <>{children}</>;
 }
+

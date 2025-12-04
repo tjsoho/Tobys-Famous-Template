@@ -1,11 +1,17 @@
-// robots .ts file for nextjs excluding all admin pages and including all of the rest of the pages
+import { MetadataRoute } from "next";
 
-export default function robots() {
+export default function robots(): MetadataRoute.Robots {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://brightleasing.com.au";
+
   return {
-    rules: {
-      userAgent: "*",
-      allow: "/",
-      disallow: "/admin",
-    },
+    rules: [
+      {
+        userAgent: "*",
+        allow: "/",
+        disallow: ["/api/*", "/admin/*", "/private/*"],
+      },
+    ],
+    sitemap: `${baseUrl}/sitemap.xml`,
+    host: baseUrl,
   };
 }
