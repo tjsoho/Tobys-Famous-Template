@@ -112,6 +112,15 @@ export type HomePageContent = {
   section7faq4answer: string;
   section7faq4answerBold: boolean;
   additionalSection7Faqs: AdditionalFAQ[];
+  sectionTitles?: {
+    hero?: string;
+    section2?: string;
+    section3?: string;
+    section4?: string;
+    section5?: string;
+    section6?: string;
+    section7?: string;
+  };
 };
 
 export type HomePageProps = BasePage<HomePageContent>;
@@ -128,12 +137,17 @@ export type ContactPageContent = {
   contactDescription: string;
   contactDescriptionBold: boolean;
   contactImage: string;
+  sectionTitles?: {
+    hero?: string;
+    contact?: string;
+  };
 };
 
 export type ContactPageProps = BasePage<ContactPageContent>;
 
 export type FooterContent = {
   logoImage: string;
+  siteLogo: string;
   tagline: string;
   taglineBold: boolean;
   phone: string;
@@ -146,6 +160,10 @@ export type FooterContent = {
   acnBold: boolean;
   copyright: string;
   copyrightBold: boolean;
+  sectionTitles?: {
+    logo?: string;
+    content?: string;
+  };
 };
 
 export type FooterProps = BasePage<FooterContent>;
@@ -177,6 +195,7 @@ export const footerFallbackData: FooterProps = {
   slug: "footer",
   content: {
     logoImage: "/images/bwlogo.png",
+    siteLogo: "/images/brightlogo.png",
     tagline: "Intelligent car ownership\nmade simple",
     taglineBold: false,
     phone: "1300 988 938",

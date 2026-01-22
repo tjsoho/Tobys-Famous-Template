@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface TeamCardProps {
     title: string;
@@ -14,13 +15,16 @@ export default function TeamCard({
     slug,
 }: TeamCardProps) {
     return (
-        <Link href={`/team/${slug}`}>
+        <Link href={`/team/${slug}`} aria-label={`View ${title} profile`}>
             <article className="group relative bg-black border border-white/20 hover:border-white transition-colors overflow-hidden">
                 <div className="aspect-[16/9] relative overflow-hidden">
-                    <img
+                    <Image
                         src={coverImage}
-                        alt={title}
+                        alt={`${title} profile image`}
+                        width={800}
+                        height={450}
                         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                 </div>
                 <div className="p-6">

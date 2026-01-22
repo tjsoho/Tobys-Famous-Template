@@ -127,10 +127,12 @@ export default function Hero({ content }: HeroProps) {
                 >
                     <Image
                         src={content.heroImage}
-                        alt="Hero Image"
-                        width={400}
-                        height={300}
+                        alt={content.heroTitle || "Novated leasing made easy - Bright Leasing"}
+                        width={800}
+                        height={600}
                         className="w-[500px] h-[300px] lg:w-full lg:h-full object-contain rounded-2xl"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 50vw"
+                        priority
                     />
                 </motion.div>
             </div>

@@ -6,6 +6,7 @@ import { EditableElement } from "@/components/core/input";
 import { HomePageContent, HomePageProps, AdditionalTile, AdditionalFAQ } from "@/app/_config";
 import useUpdatePage from "@/utils/hooks/useUpdatePage";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Pencil } from "lucide-react";
 
 export default function HomeAdminInputs(props: HomePageProps) {
 	const [heroImage, setHeroImage] = useState(
@@ -185,7 +186,39 @@ export default function HomeAdminInputs(props: HomePageProps) {
 	);
 	const [section7faq4answerBold, setSection7faq4answerBold] = useState(props.content.section7faq4answerBold ?? false);
 
+	// Section title states - load from props if available, otherwise use defaults
+	const [sectionTitles, setSectionTitles] = useState({
+		hero: props.content.sectionTitles?.hero || "Hero Section",
+		section2: props.content.sectionTitles?.section2 || "Section 2 - What is Novated Leasing",
+		section3: props.content.sectionTitles?.section3 || "Section 3 - Why Choose Bright Leasing",
+		section4: props.content.sectionTitles?.section4 || "Section 4 - How It Works",
+		section5: props.content.sectionTitles?.section5 || "Section 5 - Promotional Banner",
+		section6: props.content.sectionTitles?.section6 || "Section 6 - Customer Success Stories",
+		section7: props.content.sectionTitles?.section7 || "Section 7 - FAQ Accordion",
+	});
+	const [editingSection, setEditingSection] = useState<string | null>(null);
+	const [editTitleValue, setEditTitleValue] = useState("");
+
 	const { isSaving, updatePage } = useUpdatePage<HomePageContent>("home");
+
+	const handleTitleEdit = (sectionKey: string) => {
+		setEditingSection(sectionKey);
+		setEditTitleValue(sectionTitles[sectionKey as keyof typeof sectionTitles]);
+	};
+
+	const handleTitleSave = (sectionKey: string) => {
+		setSectionTitles((prev) => ({
+			...prev,
+			[sectionKey]: editTitleValue,
+		}));
+		setEditingSection(null);
+		setEditTitleValue("");
+	};
+
+	const handleTitleCancel = () => {
+		setEditingSection(null);
+		setEditTitleValue("");
+	};
 
 	const handleSave = async () => {
 		await updatePage({
@@ -280,6 +313,7 @@ export default function HomeAdminInputs(props: HomePageProps) {
 				section7faq4questionBold,
 				section7faq4answer,
 				section7faq4answerBold,
+				sectionTitles,
 			},
 		});
 	};
@@ -298,8 +332,55 @@ export default function HomeAdminInputs(props: HomePageProps) {
 						   HERO SECTION
 						****************************************************************/}
 						<AccordionItem value="hero" className="bg-brand-yellow/10 border border-brand-yellow/20 p-6 rounded-2xl">
-							<AccordionTrigger className="text-xl text-brand-black font-bold hover:no-underline">
-								Hero Section
+							<AccordionTrigger 
+								className="text-xl text-brand-black font-bold hover:no-underline"
+								editIcon={editingSection !== "hero" ? (
+									<button
+										onClick={(e) => {
+											e.stopPropagation();
+											handleTitleEdit("hero");
+										}}
+										className="p-2 hover:bg-black/10 rounded-full border border-brand-yellow transition-colors w-8 h-8 flex items-center justify-center"
+									>
+										<Pencil size={16} className="text-brand-black" />
+									</button>
+								) : null}
+							>
+								{editingSection === "hero" ? (
+									<div className="flex items-center gap-3 flex-1" onClick={(e) => e.stopPropagation()}>
+										<input
+											type="text"
+											value={editTitleValue}
+											onChange={(e) => setEditTitleValue(e.target.value)}
+											onKeyDown={(e) => {
+												if (e.key === "Enter") handleTitleSave("hero");
+												if (e.key === "Escape") handleTitleCancel();
+											}}
+											className="flex-1 px-2 py-1 border border-brand-black/20 rounded text-xl font-bold bg-white"
+											autoFocus
+										/>
+										<button
+											onClick={(e) => {
+												e.stopPropagation();
+												handleTitleSave("hero");
+											}}
+											className="px-3 py-1 bg-green-100 text-green-700 rounded text-sm hover:bg-green-200 transition-colors border border-green-300"
+										>
+											Save
+										</button>
+										<button
+											onClick={(e) => {
+												e.stopPropagation();
+												handleTitleCancel();
+											}}
+											className="px-3 py-1 bg-red-100 text-red-700 rounded text-sm hover:bg-red-200 transition-colors border border-red-300"
+										>
+											Cancel
+										</button>
+									</div>
+								) : (
+									<span>{sectionTitles.hero}</span>
+								)}
 							</AccordionTrigger>
 							<AccordionContent>
 								<section className="pt-4">
@@ -325,47 +406,8 @@ export default function HomeAdminInputs(props: HomePageProps) {
 									/>
 								</div>
 
-								{/* Image URL Input */}
-								<div className="space-y-3">
-									<div>
-										<label className="block text-brand-black/70 text-xs mb-1">
-											Or paste an image URL directly
-										</label>
-										<input
-											type="url"
-											value={heroImage}
-											onChange={(e) => setHeroImage(e.target.value)}
-											className="w-full p-2 bg-white text-brand-black rounded border border-brand-black/20 focus:border-brand-teal transition-colors text-sm"
-											placeholder="https://example.com/image.jpg"
-										/>
-									</div>
-
-									<div className="flex gap-2">
-										<button
-											type="button"
-											onClick={() => {
-												// Clear the current image
-												setHeroImage("/placeholder.jpg");
-											}}
-											className="px-3 py-1 bg-red-100 text-red-700 rounded text-xs hover:bg-red-200 transition-colors"
-										>
-											Clear Image
-										</button>
-										<button
-											type="button"
-											onClick={() => {
-												// Set the example URL you provided
-												setHeroImage("https://cdn.imagin.studio/getImage?customer=au-karia&make=toyota&modelFamily=corolla&modelRange=GR&modelVariant=ca&modelYear=2025&countryCode=0&licensePlateType=eu&paintId=Yellow&angle=204&tailoring=karia&width=3456&zoomLevel=1&billingTag=brightleasing-website");
-											}}
-											className="px-3 py-1 bg-brand-yellow/20 text-brand-black rounded text-xs hover:bg-brand-yellow/30 transition-colors"
-										>
-											Use Example
-										</button>
-									</div>
-								</div>
-
 								<p className="text-gray-400 text-xs">
-									Click image to choose from library, or paste a direct URL above
+									Click image to choose from library
 								</p>
 							</div>
 
@@ -440,8 +482,55 @@ export default function HomeAdminInputs(props: HomePageProps) {
 							SECTION 2: WHAT IS NOVATED LEASING
 						****************************************************************/}
 						<AccordionItem value="section2" className="bg-brand-teal/10 border border-brand-teal/20 p-8 rounded-2xl">
-							<AccordionTrigger className="text-xl text-brand-black font-bold hover:no-underline">
-								Section 2 - What is Novated Leasing
+							<AccordionTrigger 
+								className="text-xl text-brand-black font-bold hover:no-underline"
+								editIcon={editingSection !== "section2" ? (
+									<button
+										onClick={(e) => {
+											e.stopPropagation();
+											handleTitleEdit("section2");
+										}}
+										className="p-2 hover:bg-black/10 rounded-full border border-brand-yellow transition-colors w-8 h-8 flex items-center justify-center"
+									>
+										<Pencil size={16} className="text-brand-black" />
+									</button>
+								) : null}
+							>
+								{editingSection === "section2" ? (
+									<div className="flex items-center gap-3 flex-1" onClick={(e) => e.stopPropagation()}>
+										<input
+											type="text"
+											value={editTitleValue}
+											onChange={(e) => setEditTitleValue(e.target.value)}
+											onKeyDown={(e) => {
+												if (e.key === "Enter") handleTitleSave("section2");
+												if (e.key === "Escape") handleTitleCancel();
+											}}
+											className="flex-1 px-2 py-1 border border-brand-black/20 rounded text-xl font-bold bg-white"
+											autoFocus
+										/>
+										<button
+											onClick={(e) => {
+												e.stopPropagation();
+												handleTitleSave("section2");
+											}}
+											className="px-3 py-1 bg-green-100 text-green-700 rounded text-sm hover:bg-green-200 transition-colors border border-green-300"
+										>
+											Save
+										</button>
+										<button
+											onClick={(e) => {
+												e.stopPropagation();
+												handleTitleCancel();
+											}}
+											className="px-3 py-1 bg-red-100 text-red-700 rounded text-sm hover:bg-red-200 transition-colors border border-red-300"
+										>
+											Cancel
+										</button>
+									</div>
+								) : (
+									<span>{sectionTitles.section2}</span>
+								)}
 							</AccordionTrigger>
 							<AccordionContent>
 								<section className="pt-4">
@@ -468,10 +557,6 @@ export default function HomeAdminInputs(props: HomePageProps) {
 										<span className="text-brand-black text-sm">Make title bold (500 weight)</span>
 									</label>
 								</div>
-								<p className="text-gray-400 text-xs mt-1">
-									This appears as the small uppercase title above the main
-									paragraph
-								</p>
 							</div>
 
 							<div>
@@ -495,10 +580,6 @@ export default function HomeAdminInputs(props: HomePageProps) {
 										<span className="text-brand-black text-sm">Make paragraph bold (500 weight)</span>
 									</label>
 								</div>
-								<p className="text-gray-400 text-xs mt-1">
-									This appears as the large paragraph text explaining novated
-									leasing
-								</p>
 							</div>
 						</div>
 								</section>
@@ -509,8 +590,55 @@ export default function HomeAdminInputs(props: HomePageProps) {
 							SECTION 3: WHY CHOOSE BRIGHT LEASING TILES
 						****************************************************************/}
 						<AccordionItem value="section3" className="bg-brand-teal/10 border border-brand-teal/20 p-8 rounded-2xl">
-							<AccordionTrigger className="text-xl text-brand-black font-bold hover:no-underline">
-								Section 3 - Why Choose Bright Leasing
+							<AccordionTrigger 
+								className="text-xl text-brand-black font-bold hover:no-underline"
+								editIcon={editingSection !== "section3" ? (
+									<button
+										onClick={(e) => {
+											e.stopPropagation();
+											handleTitleEdit("section3");
+										}}
+										className="p-2 hover:bg-black/10 rounded-full border border-brand-yellow transition-colors w-8 h-8 flex items-center justify-center"
+									>
+										<Pencil size={16} className="text-brand-black" />
+									</button>
+								) : null}
+							>
+								{editingSection === "section3" ? (
+									<div className="flex items-center gap-3 flex-1" onClick={(e) => e.stopPropagation()}>
+										<input
+											type="text"
+											value={editTitleValue}
+											onChange={(e) => setEditTitleValue(e.target.value)}
+											onKeyDown={(e) => {
+												if (e.key === "Enter") handleTitleSave("section3");
+												if (e.key === "Escape") handleTitleCancel();
+											}}
+											className="flex-1 px-2 py-1 border border-brand-black/20 rounded text-xl font-bold bg-white"
+											autoFocus
+										/>
+										<button
+											onClick={(e) => {
+												e.stopPropagation();
+												handleTitleSave("section3");
+											}}
+											className="px-3 py-1 bg-green-100 text-green-700 rounded text-sm hover:bg-green-200 transition-colors border border-green-300"
+										>
+											Save
+										</button>
+										<button
+											onClick={(e) => {
+												e.stopPropagation();
+												handleTitleCancel();
+											}}
+											className="px-3 py-1 bg-red-100 text-red-700 rounded text-sm hover:bg-red-200 transition-colors border border-red-300"
+										>
+											Cancel
+										</button>
+									</div>
+								) : (
+									<span>{sectionTitles.section3}</span>
+								)}
 							</AccordionTrigger>
 							<AccordionContent>
 								<section className="pt-4">
@@ -538,9 +666,6 @@ export default function HomeAdminInputs(props: HomePageProps) {
 										<span className="text-brand-black text-sm">Make title bold (500 weight)</span>
 									</label>
 								</div>
-								<p className="text-gray-400 text-xs mt-1">
-									The main title that appears on the left side
-								</p>
 							</div>
 
 							{/* Tiles */}
@@ -828,8 +953,55 @@ export default function HomeAdminInputs(props: HomePageProps) {
 							SECTION 4: HOW IT WORKS
 						****************************************************************/}
 						<AccordionItem value="section4" className="bg-brand-teal/10 border border-brand-teal/20 p-8 rounded-2xl">
-							<AccordionTrigger className="text-xl text-brand-black font-bold hover:no-underline">
-								Section 4 - How It Works
+							<AccordionTrigger 
+								className="text-xl text-brand-black font-bold hover:no-underline"
+								editIcon={editingSection !== "section4" ? (
+									<button
+										onClick={(e) => {
+											e.stopPropagation();
+											handleTitleEdit("section4");
+										}}
+										className="p-2 hover:bg-black/10 rounded-full border border-brand-yellow transition-colors w-8 h-8 flex items-center justify-center"
+									>
+										<Pencil size={16} className="text-brand-black" />
+									</button>
+								) : null}
+							>
+								{editingSection === "section4" ? (
+									<div className="flex items-center gap-3 flex-1" onClick={(e) => e.stopPropagation()}>
+										<input
+											type="text"
+											value={editTitleValue}
+											onChange={(e) => setEditTitleValue(e.target.value)}
+											onKeyDown={(e) => {
+												if (e.key === "Enter") handleTitleSave("section4");
+												if (e.key === "Escape") handleTitleCancel();
+											}}
+											className="flex-1 px-2 py-1 border border-brand-black/20 rounded text-xl font-bold bg-white"
+											autoFocus
+										/>
+										<button
+											onClick={(e) => {
+												e.stopPropagation();
+												handleTitleSave("section4");
+											}}
+											className="px-3 py-1 bg-green-100 text-green-700 rounded text-sm hover:bg-green-200 transition-colors border border-green-300"
+										>
+											Save
+										</button>
+										<button
+											onClick={(e) => {
+												e.stopPropagation();
+												handleTitleCancel();
+											}}
+											className="px-3 py-1 bg-red-100 text-red-700 rounded text-sm hover:bg-red-200 transition-colors border border-red-300"
+										>
+											Cancel
+										</button>
+									</div>
+								) : (
+									<span>{sectionTitles.section4}</span>
+								)}
 							</AccordionTrigger>
 							<AccordionContent>
 								<section className="pt-4">
@@ -857,9 +1029,6 @@ export default function HomeAdminInputs(props: HomePageProps) {
 										<span className="text-brand-black text-sm">Make title bold (500 weight)</span>
 									</label>
 								</div>
-								<p className="text-gray-400 text-xs mt-1">
-									The main title for the How It Works section
-								</p>
 							</div>
 
 							{/* Steps */}
@@ -1129,8 +1298,55 @@ export default function HomeAdminInputs(props: HomePageProps) {
 							SECTION 5: PROMOTIONAL BANNER
 						****************************************************************/}
 						<AccordionItem value="section5" className="bg-brand-teal/10 border border-brand-teal/20 p-8 rounded-2xl">
-							<AccordionTrigger className="text-xl text-brand-black font-bold hover:no-underline">
-								Section 5 - Promotional Banner
+							<AccordionTrigger 
+								className="text-xl text-brand-black font-bold hover:no-underline"
+								editIcon={editingSection !== "section5" ? (
+									<button
+										onClick={(e) => {
+											e.stopPropagation();
+											handleTitleEdit("section5");
+										}}
+										className="p-2 hover:bg-black/10 rounded-full border border-brand-yellow transition-colors w-8 h-8 flex items-center justify-center"
+									>
+										<Pencil size={16} className="text-brand-black" />
+									</button>
+								) : null}
+							>
+								{editingSection === "section5" ? (
+									<div className="flex items-center gap-3 flex-1" onClick={(e) => e.stopPropagation()}>
+										<input
+											type="text"
+											value={editTitleValue}
+											onChange={(e) => setEditTitleValue(e.target.value)}
+											onKeyDown={(e) => {
+												if (e.key === "Enter") handleTitleSave("section5");
+												if (e.key === "Escape") handleTitleCancel();
+											}}
+											className="flex-1 px-2 py-1 border border-brand-black/20 rounded text-xl font-bold bg-white"
+											autoFocus
+										/>
+										<button
+											onClick={(e) => {
+												e.stopPropagation();
+												handleTitleSave("section5");
+											}}
+											className="px-3 py-1 bg-green-100 text-green-700 rounded text-sm hover:bg-green-200 transition-colors border border-green-300"
+										>
+											Save
+										</button>
+										<button
+											onClick={(e) => {
+												e.stopPropagation();
+												handleTitleCancel();
+											}}
+											className="px-3 py-1 bg-red-100 text-red-700 rounded text-sm hover:bg-red-200 transition-colors border border-red-300"
+										>
+											Cancel
+										</button>
+									</div>
+								) : (
+									<span>{sectionTitles.section5}</span>
+								)}
 							</AccordionTrigger>
 							<AccordionContent>
 								<section className="pt-4">
@@ -1157,47 +1373,8 @@ export default function HomeAdminInputs(props: HomePageProps) {
 										/>
 									</div>
 
-									{/* Image URL Input */}
-									<div className="space-y-3">
-										<div>
-											<label className="block text-brand-black/70 text-xs mb-1">
-												Or paste an image URL directly
-											</label>
-											<input
-												type="url"
-												value={section5image}
-												onChange={(e) => setSection5image(e.target.value)}
-												className="w-full p-2 bg-white text-brand-black rounded border border-brand-black/20 focus:border-brand-teal transition-colors text-sm"
-												placeholder="https://example.com/image.jpg"
-											/>
-										</div>
-
-										<div className="flex gap-2">
-											<button
-												type="button"
-												onClick={() => {
-													// Clear the current image
-													setSection5image("/placeholder.jpg");
-												}}
-												className="px-3 py-1 bg-red-100 text-red-700 rounded text-xs hover:bg-red-200 transition-colors"
-											>
-												Clear Image
-											</button>
-											<button
-												type="button"
-												onClick={() => {
-													// Set the example URL you provided
-													setSection5image("https://cdn.imagin.studio/getImage?customer=au-karia&make=toyota&modelFamily=corolla&modelRange=GR&modelVariant=ca&modelYear=2025&countryCode=0&licensePlateType=eu&paintId=Yellow&angle=204&tailoring=karia&width=3456&zoomLevel=1&billingTag=brightleasing-website");
-												}}
-												className="px-3 py-1 bg-brand-yellow/20 text-brand-black rounded text-xs hover:bg-brand-yellow/30 transition-colors"
-											>
-												Use Example
-											</button>
-										</div>
-									</div>
-
 									<p className="text-gray-400 text-xs">
-										Click image to choose from library, or paste a direct URL above
+										Click image to choose from library
 									</p>
 								</div>
 
@@ -1283,8 +1460,55 @@ export default function HomeAdminInputs(props: HomePageProps) {
 							SECTION 6: CUSTOMER SUCCESS STORIES
 						****************************************************************/}
 						<AccordionItem value="section6" className="bg-brand-teal/10 border border-brand-teal/20 p-8 rounded-2xl">
-							<AccordionTrigger className="text-xl text-brand-black font-bold hover:no-underline">
-								Section 6 - Customer Success Stories
+							<AccordionTrigger 
+								className="text-xl text-brand-black font-bold hover:no-underline"
+								editIcon={editingSection !== "section6" ? (
+									<button
+										onClick={(e) => {
+											e.stopPropagation();
+											handleTitleEdit("section6");
+										}}
+										className="p-2 hover:bg-black/10 rounded-full border border-brand-yellow transition-colors w-8 h-8 flex items-center justify-center"
+									>
+										<Pencil size={16} className="text-brand-black" />
+									</button>
+								) : null}
+							>
+								{editingSection === "section6" ? (
+									<div className="flex items-center gap-3 flex-1" onClick={(e) => e.stopPropagation()}>
+										<input
+											type="text"
+											value={editTitleValue}
+											onChange={(e) => setEditTitleValue(e.target.value)}
+											onKeyDown={(e) => {
+												if (e.key === "Enter") handleTitleSave("section6");
+												if (e.key === "Escape") handleTitleCancel();
+											}}
+											className="flex-1 px-2 py-1 border border-brand-black/20 rounded text-xl font-bold bg-white"
+											autoFocus
+										/>
+										<button
+											onClick={(e) => {
+												e.stopPropagation();
+												handleTitleSave("section6");
+											}}
+											className="px-3 py-1 bg-green-100 text-green-700 rounded text-sm hover:bg-green-200 transition-colors border border-green-300"
+										>
+											Save
+										</button>
+										<button
+											onClick={(e) => {
+												e.stopPropagation();
+												handleTitleCancel();
+											}}
+											className="px-3 py-1 bg-red-100 text-red-700 rounded text-sm hover:bg-red-200 transition-colors border border-red-300"
+										>
+											Cancel
+										</button>
+									</div>
+								) : (
+									<span>{sectionTitles.section6}</span>
+								)}
 							</AccordionTrigger>
 							<AccordionContent>
 								<section className="pt-4">
@@ -1312,9 +1536,6 @@ export default function HomeAdminInputs(props: HomePageProps) {
 										<span className="text-brand-black text-sm">Make title bold (500 weight)</span>
 									</label>
 								</div>
-								<p className="text-gray-400 text-xs mt-1">
-									The main title that appears on the left side
-								</p>
 							</div>
 
 							{/* Tiles */}
@@ -1602,8 +1823,55 @@ export default function HomeAdminInputs(props: HomePageProps) {
 							SECTION 7: FAQ ACCORDION
 						****************************************************************/}
 						<AccordionItem value="section7" className="bg-brand-teal/10 border border-brand-teal/20 p-8 rounded-2xl">
-							<AccordionTrigger className="text-xl text-brand-black font-bold hover:no-underline">
-								Section 7 - FAQ Accordion
+							<AccordionTrigger 
+								className="text-xl text-brand-black font-bold hover:no-underline"
+								editIcon={editingSection !== "section7" ? (
+									<button
+										onClick={(e) => {
+											e.stopPropagation();
+											handleTitleEdit("section7");
+										}}
+										className="p-2 hover:bg-black/10 rounded-full border border-brand-yellow transition-colors w-8 h-8 flex items-center justify-center"
+									>
+										<Pencil size={16} className="text-brand-black" />
+									</button>
+								) : null}
+							>
+								{editingSection === "section7" ? (
+									<div className="flex items-center gap-3 flex-1" onClick={(e) => e.stopPropagation()}>
+										<input
+											type="text"
+											value={editTitleValue}
+											onChange={(e) => setEditTitleValue(e.target.value)}
+											onKeyDown={(e) => {
+												if (e.key === "Enter") handleTitleSave("section7");
+												if (e.key === "Escape") handleTitleCancel();
+											}}
+											className="flex-1 px-2 py-1 border border-brand-black/20 rounded text-xl font-bold bg-white"
+											autoFocus
+										/>
+										<button
+											onClick={(e) => {
+												e.stopPropagation();
+												handleTitleSave("section7");
+											}}
+											className="px-3 py-1 bg-green-100 text-green-700 rounded text-sm hover:bg-green-200 transition-colors border border-green-300"
+										>
+											Save
+										</button>
+										<button
+											onClick={(e) => {
+												e.stopPropagation();
+												handleTitleCancel();
+											}}
+											className="px-3 py-1 bg-red-100 text-red-700 rounded text-sm hover:bg-red-200 transition-colors border border-red-300"
+										>
+											Cancel
+										</button>
+									</div>
+								) : (
+									<span>{sectionTitles.section7}</span>
+								)}
 							</AccordionTrigger>
 							<AccordionContent>
 								<section className="pt-4">
@@ -1631,9 +1899,6 @@ export default function HomeAdminInputs(props: HomePageProps) {
 										<span className="text-brand-black text-sm">Make title bold (500 weight)</span>
 									</label>
 								</div>
-								<p className="text-gray-400 text-xs mt-1">
-									The main title for the FAQ section
-								</p>
 							</div>
 
 							{/* FAQ Items */}

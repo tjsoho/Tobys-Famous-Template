@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 
 export async function revalidateAllPages() {
   try {
-    revalidatePath("/");
+    revalidatePath("/", "layout");
     revalidatePath("/about-us");
     revalidatePath("/services");
     revalidatePath("/work");
@@ -14,6 +14,10 @@ export async function revalidateAllPages() {
     revalidatePath("/podcasts");
     revalidatePath("/science");
     revalidatePath("/reviews");
+    revalidatePath("/contact");
+    revalidatePath("/privacy-policy");
+    revalidatePath("/terms-and-conditions");
+    revalidatePath("/terms-of-use");
     console.log("Revalidated all pages");
     return { success: true };
   } catch (error) {

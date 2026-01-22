@@ -176,6 +176,7 @@ const RichTextEditor = ({ content, onChange, className }: RichTextEditorProps) =
                     type="button"
                     onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
                     className={buttonStyle(editor.isActive('heading', { level: 1 }))}
+                    aria-label="Toggle Heading 1"
                 >
                     H1
                 </button>
@@ -183,6 +184,7 @@ const RichTextEditor = ({ content, onChange, className }: RichTextEditorProps) =
                     type="button"
                     onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
                     className={buttonStyle(editor.isActive('heading', { level: 2 }))}
+                    aria-label="Toggle Heading 2"
                 >
                     H2
                 </button>
@@ -190,6 +192,7 @@ const RichTextEditor = ({ content, onChange, className }: RichTextEditorProps) =
                     type="button"
                     onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
                     className={buttonStyle(editor.isActive('heading', { level: 3 }))}
+                    aria-label="Toggle Heading 3"
                 >
                     H3
                 </button>
@@ -197,14 +200,16 @@ const RichTextEditor = ({ content, onChange, className }: RichTextEditorProps) =
                     type="button"
                     onClick={() => editor.chain().focus().setParagraph().run()}
                     className={buttonStyle(editor.isActive('paragraph'))}
+                    aria-label="Toggle Paragraph"
                 >
                     P
                 </button>
-                <div className="w-px h-6 bg-brand-black/20 mx-1 self-center" />
+                <div className="w-px h-6 bg-brand-black/20 mx-1 self-center" aria-hidden="true" />
                 <button
                     type="button"
                     onClick={() => editor.chain().focus().toggleBold().run()}
                     className={buttonStyle(editor.isActive('bold'))}
+                    aria-label="Toggle Bold"
                 >
                     <strong>B</strong>
                 </button>
@@ -212,6 +217,7 @@ const RichTextEditor = ({ content, onChange, className }: RichTextEditorProps) =
                     type="button"
                     onClick={() => editor.chain().focus().toggleItalic().run()}
                     className={buttonStyle(editor.isActive('italic'))}
+                    aria-label="Toggle Italic"
                 >
                     <em>I</em>
                 </button>
@@ -219,14 +225,16 @@ const RichTextEditor = ({ content, onChange, className }: RichTextEditorProps) =
                     type="button"
                     onClick={() => editor.chain().focus().toggleUnderline().run()}
                     className={buttonStyle(editor.isActive('underline'))}
+                    aria-label="Toggle Underline"
                 >
                     <u>U</u>
                 </button>
-                <div className="w-px h-6 bg-brand-black/20 mx-1 self-center" />
+                <div className="w-px h-6 bg-brand-black/20 mx-1 self-center" aria-hidden="true" />
                 <button
                     type="button"
                     onClick={setLink}
                     className={buttonStyle(editor.isActive('link'))}
+                    aria-label="Add or Edit Link"
                 >
                     Link
                 </button>
@@ -234,6 +242,7 @@ const RichTextEditor = ({ content, onChange, className }: RichTextEditorProps) =
                     type="button"
                     onClick={addImage}
                     className="px-3 py-1.5 text-sm font-medium text-brand-black/70 hover:bg-brand-cream/50 transition-colors border border-transparent"
+                    aria-label="Add Image"
                 >
                     Image
                 </button>
@@ -241,6 +250,7 @@ const RichTextEditor = ({ content, onChange, className }: RichTextEditorProps) =
                     type="button"
                     onClick={() => editor.chain().focus().toggleBulletList().run()}
                     className={buttonStyle(editor.isActive('bulletList'))}
+                    aria-label="Toggle Bullet List"
                 >
                     • List
                 </button>
@@ -248,6 +258,7 @@ const RichTextEditor = ({ content, onChange, className }: RichTextEditorProps) =
                     type="button"
                     onClick={() => editor.chain().focus().toggleOrderedList().run()}
                     className={buttonStyle(editor.isActive('orderedList'))}
+                    aria-label="Toggle Numbered List"
                 >
                     1. List
                 </button>

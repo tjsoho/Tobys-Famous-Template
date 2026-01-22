@@ -29,6 +29,7 @@ interface FooterColumn {
 interface FooterProps {
     content: {
         logoImage: string;
+        siteLogo?: string;
         tagline: string;
         taglineBold: boolean;
         phone: string;
@@ -122,9 +123,9 @@ const Footer = ({ content }: FooterProps) => {
                         variants={itemVariants}
                         className="lg:col-span-1"
                     >
-                        <Link href="/" className="block mb-6">
+                        <Link href="/" aria-label="Bright Leasing Home" className="block mb-6">
                             <Image
-                                src={content.logoImage}
+                                src={content.siteLogo || content.logoImage}
                                 alt="Bright Leasing Logo"
                                 width={320}
                                 height={240}
@@ -171,6 +172,7 @@ const Footer = ({ content }: FooterProps) => {
                                         >
                                             <Link
                                                 href={link.href}
+                                                aria-label={link.label}
                                                 className="text-white/70 hover:text-white transition-colors duration-300 block"
                                             >
                                                 {link.label}

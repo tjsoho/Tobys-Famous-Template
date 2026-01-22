@@ -24,6 +24,7 @@ export default function BlogCard({
     return (
         <Link
             href={`/blog/posts/${slug}`}
+            aria-label={`Read article: ${title}`}
             className="group block bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-500 hover:scale-[1.02] border-2 border-brand-yellow/30 hover:border-brand-yellow"
         >
             {/* ************************************************************

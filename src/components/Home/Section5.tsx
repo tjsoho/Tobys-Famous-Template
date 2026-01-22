@@ -140,9 +140,10 @@ export default function Section5({ content }: Section5Props) {
 					<div className="relative w-[500px] h-[300px] lg:w-full lg:h-full">
 						<Image
 							src={content.section5image}
-							alt="Promotional Image"
+							alt={content.section5title || "Novated leasing promotional content"}
 							fill
 							className="object-cover rounded-2xl"
+							sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 50vw"
 						/>
 					</div>
 				</motion.div>

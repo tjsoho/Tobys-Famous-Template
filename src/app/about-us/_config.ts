@@ -21,6 +21,11 @@ export type AboutUsPageContent = {
   tab5title: string;
   tab5content: string;
   tab5image: string;
+  sectionTitles?: {
+    hero?: string;
+    tabs?: string;
+    youtube?: string;
+  };
 };
 
 export type AboutUsPageProps = BasePage<AboutUsPageContent>;

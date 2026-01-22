@@ -11,9 +11,10 @@ import { BWestSmallButton } from "../ui/b-west-small";
 
 interface HeaderProps {
 	headerButtonText?: string;
+	siteLogo?: string;
 }
 
-const Header = ({ headerButtonText = "Start in 60 Seconds" }: HeaderProps) => {
+const Header = ({ headerButtonText = "Start in 60 Seconds", siteLogo = "/images/brightlogo.png" }: HeaderProps) => {
 	// const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const [isLoaded, setIsLoaded] = useState(false);
 	const pathname = usePathname();
@@ -56,23 +57,23 @@ const Header = ({ headerButtonText = "Start in 60 Seconds" }: HeaderProps) => {
 						>
 							<div>
 								{/* Logo */}
-								<Link href="/" className="flex items-center gap-3">
-									<Image src="/images/brightlogo.png" alt="Logo" width={120} height={100} className="w-[80%] lg:w-full h-auto" />
+								<Link href="/" aria-label="Bright Leasing Home" className="flex items-center gap-3">
+									<Image src={siteLogo} alt="Bright Leasing Logo" width={120} height={100} className="w-[80%] lg:w-full h-auto" priority />
 								</Link>
 							</div>
 							{/* Navigation Tabs - Hidden on mobile */}
 							<div className="hidden lg:flex bg-brand-teal rounded-full p-1">
-								<Link href="/contact" className="px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 flex items-center gap-2 hover:bg-brand-yellow hover:text-brand-black hover:scale-105 group">
+								<Link href="/contact" aria-label="Contact for Employees" className="px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 flex items-center gap-2 hover:bg-brand-yellow hover:text-brand-black hover:scale-105 group">
 									Employees
 									{/* add a plus icon to the right of the text */}
-									<svg className="w-4 h-4 transition-transform duration-300 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<svg className="w-4 h-4 transition-transform duration-300 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
 										<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
 									</svg>
 								</Link>
-								<Link href="/contact" className="px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 flex items-center gap-2 hover:bg-brand-yellow hover:text-brand-black hover:scale-105 group">
+								<Link href="/contact" aria-label="Contact for Employers" className="px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 flex items-center gap-2 hover:bg-brand-yellow hover:text-brand-black hover:scale-105 group">
 									Employers
 									{/* add a plus icon to the right of the text */}
-									<svg className="w-4 h-4 transition-transform duration-300 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<svg className="w-4 h-4 transition-transform duration-300 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
 										<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
 									</svg>
 								</Link>
@@ -100,9 +101,9 @@ const Header = ({ headerButtonText = "Start in 60 Seconds" }: HeaderProps) => {
 									}
 								}}
 								className="w-10 h-10 border border-brand-black rounded-full flex items-center justify-center hover:bg-brand-black hover:text-white transition-colors relative z-20"
-								aria-label="Scroll to Section 3"
+								aria-label="Open navigation menu"
 							>
-								<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
 									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
 								</svg>
 							</button>
@@ -124,9 +125,9 @@ const Header = ({ headerButtonText = "Start in 60 Seconds" }: HeaderProps) => {
 								}
 							}}
 							className=" p-2 rounded-full  flex items-center justify-center hover:bg-brand-teal/80 transition-colors relative z-20"
-							aria-label="Scroll to Section 3"
+							aria-label="Open mobile navigation menu"
 						>
-							<svg className="w-5 h-5 text-brand-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<svg className="w-5 h-5 text-brand-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
 								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M4 6h16M4 12h16M4 18h16" />
 							</svg>
 						</button>

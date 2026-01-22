@@ -20,10 +20,14 @@ const AccordionItem = React.forwardRef<
 ));
 AccordionItem.displayName = "AccordionItem";
 
+interface AccordionTriggerProps extends React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger> {
+  editIcon?: React.ReactNode;
+}
+
 const AccordionTrigger = React.forwardRef<
   React.ElementRef<typeof AccordionPrimitive.Trigger>,
-  React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger>
->(({ className, children, ...props }, ref) => {
+  AccordionTriggerProps
+>(({ className, children, editIcon, ...props }, ref) => {
   const [isOpen, setIsOpen] = React.useState(false);
 
   return (
@@ -38,25 +42,28 @@ const AccordionTrigger = React.forwardRef<
         {...props}
       >
         {children}
-        <div className="relative group">
-          <Plus
-            size={20}
-            strokeWidth={2.5}
-            className={cn(
-              "shrink-0 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:rotate-90 text-brand-yellow rounded-full border border-brand-yellow p-2 w-8 h-8",
-              isOpen ? "opacity-0 rotate-90" : "opacity-100 rotate-0"
-            )}
-            aria-hidden="true"
-          />
-          <Minus
-            size={20}
-            strokeWidth={2.5}
-            className={cn(
-              "shrink-0 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] absolute top-0 left-0 group-hover:rotate-90 text-brand-yellow rounded-full border border-brand-yellow p-2 w-8 h-8",
-              isOpen ? "opacity-100 rotate-0" : "opacity-0 rotate-90"
-            )}
-            aria-hidden="true"
-          />
+        <div className="flex items-center gap-2">
+          {editIcon}
+          <div className="relative group">
+            <Plus
+              size={20}
+              strokeWidth={2.5}
+              className={cn(
+                "shrink-0 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:rotate-90 text-brand-yellow rounded-full border border-brand-yellow p-2 w-8 h-8",
+                isOpen ? "opacity-0 rotate-90" : "opacity-100 rotate-0"
+              )}
+              aria-hidden="true"
+            />
+            <Minus
+              size={20}
+              strokeWidth={2.5}
+              className={cn(
+                "shrink-0 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] absolute top-0 left-0 group-hover:rotate-90 text-brand-yellow rounded-full border border-brand-yellow p-2 w-8 h-8",
+                isOpen ? "opacity-100 rotate-0" : "opacity-0 rotate-90"
+              )}
+              aria-hidden="true"
+            />
+          </div>
         </div>
       </AccordionPrimitive.Trigger>
     </AccordionPrimitive.Header>

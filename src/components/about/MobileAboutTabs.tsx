@@ -27,6 +27,9 @@ export default function MobileAboutTabs({ items }: Props) {
                         return (
                             <motion.button
                                 key={item.key}
+                                type="button"
+                                aria-label={`View ${item.title} information`}
+                                aria-pressed={isActive}
                                 className={`flex items-center gap-4 w-full max-w-md border ${isActive
                                     ? "bg-black text-white border-white p-2"
                                     : "bg-black text-white/30 border-white/10 p-1"

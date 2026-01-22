@@ -146,6 +146,13 @@ const AdminTiles = () => {
             description: "Manage SEO metadata for all pages",
             color: "bg-brand-yellow text-brand-black"
         },
+        {
+            href: "/admin/site-logo",
+            icon: "🖼️",
+            title: "Site Logo",
+            description: "Manage site logo for header and admin",
+            color: "bg-brand-teal text-white"
+        },
 
     ];
 

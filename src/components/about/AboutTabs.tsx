@@ -44,6 +44,8 @@ export default function AboutTabs({ items }: AboutTabsProps) {
 							key={item.key}
 							type="button"
 							onClick={() => setActiveIndex(index)}
+							aria-label={`View ${item.title} information`}
+							aria-pressed={isActive}
 							className={`group border flex flex-col items-center justify-center gap-3 transition-colors py-4 w-38 ${isActive
 								? "bg-black text-white border-white"
 								: "bg-black text-white/50 border-white/50 hover:border-white/80 hover:text-white/80"
