@@ -12,6 +12,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { navigationLinks } from "@/components/core/navigation";
 import { BWestSmallButton } from "../ui/b-west-small";
+import { ensureAbsoluteUrl } from "@/utils/url";
 
 /* ************************************************************
                         INTERFACES
@@ -20,12 +21,21 @@ interface BubbleMenuMobileProps {
     isOpen: boolean;
     onClose: () => void;
     headerButtonText?: string;
+    siteLogo?: string;
+    socialMedia?: {
+        instagram?: string;
+        facebook?: string;
+        youtube?: string;
+        pinterest?: string;
+        linkedin?: string;
+        tiktok?: string;
+    };
 }
 
 /* ************************************************************
                         COMPONENTS
 ************************************************************ */
-const BubbleMenuMobile = ({ isOpen, onClose, headerButtonText = "Start In 60 Seconds" }: BubbleMenuMobileProps) => {
+const BubbleMenuMobile = ({ isOpen, onClose, headerButtonText = "Start In 60 Seconds", siteLogo = "/images/brightlogo.png", socialMedia }: BubbleMenuMobileProps) => {
     return (
         <AnimatePresence>
             {isOpen && (
@@ -85,8 +95,8 @@ const BubbleMenuMobile = ({ isOpen, onClose, headerButtonText = "Start In 60 Sec
                             exit={{ opacity: 0, x: -20, transition: { delay: 0.1, duration: 0.2 } }}
                             transition={{ delay: 0.3, duration: 0.3 }}
                         >
-                            <Link href="/" className="flex items-center">
-                                <Image src="/images/bwlogo.png" alt="Logo" width={100} height={80} className="w-[120px] h-auto" />
+                            <Link href="/" aria-label="Bright Leasing Home" className="flex items-center">
+                                <Image src={siteLogo} alt="Bright Leasing Logo" width={100} height={80} className="w-[120px] h-auto" />
                             </Link>
                         </motion.div>
 
@@ -159,13 +169,37 @@ const BubbleMenuMobile = ({ isOpen, onClose, headerButtonText = "Start In 60 Sec
                                     Terms of Service
                                 </Link>
                             </div>
-                            <div className="flex gap-4">
-                                <Link href="/linkedin" className="hover:text-brand-black transition-colors" onClick={onClose}>
-                                    LinkedIn
-                                </Link>
-                                <Link href="/twitter" className="hover:text-brand-black transition-colors" onClick={onClose}>
-                                    Twitter
-                                </Link>
+                            <div className="flex flex-wrap gap-4 justify-center">
+                                {socialMedia?.instagram && ensureAbsoluteUrl(socialMedia.instagram) && (
+                                    <a href={ensureAbsoluteUrl(socialMedia.instagram)} target="_blank" rel="noopener noreferrer" className="hover:text-brand-black transition-colors" aria-label="Instagram">
+                                        Instagram
+                                    </a>
+                                )}
+                                {socialMedia?.facebook && ensureAbsoluteUrl(socialMedia.facebook) && (
+                                    <a href={ensureAbsoluteUrl(socialMedia.facebook)} target="_blank" rel="noopener noreferrer" className="hover:text-brand-black transition-colors" aria-label="Facebook">
+                                        Facebook
+                                    </a>
+                                )}
+                                {socialMedia?.youtube && ensureAbsoluteUrl(socialMedia.youtube) && (
+                                    <a href={ensureAbsoluteUrl(socialMedia.youtube)} target="_blank" rel="noopener noreferrer" className="hover:text-brand-black transition-colors" aria-label="YouTube">
+                                        YouTube
+                                    </a>
+                                )}
+                                {socialMedia?.pinterest && ensureAbsoluteUrl(socialMedia.pinterest) && (
+                                    <a href={ensureAbsoluteUrl(socialMedia.pinterest)} target="_blank" rel="noopener noreferrer" className="hover:text-brand-black transition-colors" aria-label="Pinterest">
+                                        Pinterest
+                                    </a>
+                                )}
+                                {socialMedia?.linkedin && ensureAbsoluteUrl(socialMedia.linkedin) && (
+                                    <a href={ensureAbsoluteUrl(socialMedia.linkedin)} target="_blank" rel="noopener noreferrer" className="hover:text-brand-black transition-colors" aria-label="LinkedIn">
+                                        LinkedIn
+                                    </a>
+                                )}
+                                {socialMedia?.tiktok && ensureAbsoluteUrl(socialMedia.tiktok) && (
+                                    <a href={ensureAbsoluteUrl(socialMedia.tiktok)} target="_blank" rel="noopener noreferrer" className="hover:text-brand-black transition-colors" aria-label="TikTok">
+                                        TikTok
+                                    </a>
+                                )}
                             </div>
                         </motion.div>
                     </motion.div>

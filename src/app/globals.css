@@ -215,10 +215,13 @@
     }
 
     p {
-      font-size: 24px !important;
+      font-size: 21px !important;
     }
 
-    .text-small {
+    .text-middle {
+      font-size: 18px !important;
+    }
+    .text-tiny {
       font-size: 16px !important;
     }
   }

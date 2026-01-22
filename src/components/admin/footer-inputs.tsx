@@ -72,6 +72,7 @@ export default function FooterAdminInputs(props: FooterProps) {
 				acnBold,
 				copyright,
 				copyrightBold,
+				socialMedia: props.content.socialMedia, // Preserve social media links
 				sectionTitles,
 			},
 		});

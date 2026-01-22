@@ -160,9 +160,18 @@ export type FooterContent = {
   acnBold: boolean;
   copyright: string;
   copyrightBold: boolean;
+  socialMedia?: {
+    instagram?: string;
+    facebook?: string;
+    youtube?: string;
+    pinterest?: string;
+    linkedin?: string;
+    tiktok?: string;
+  };
   sectionTitles?: {
     logo?: string;
     content?: string;
+    social?: string;
   };
 };
 

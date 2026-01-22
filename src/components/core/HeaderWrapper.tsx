@@ -28,6 +28,7 @@ export default async function HeaderWrapper() {
         <Header 
             headerButtonText={homePage.content.headerButtonText}
             siteLogo={footerPage.content.siteLogo || "/images/brightlogo.png"}
+            socialMedia={footerPage.content.socialMedia}
         />
     );
 }

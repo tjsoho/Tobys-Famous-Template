@@ -12,6 +12,7 @@ import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { ensureAbsoluteUrl } from "@/utils/url";
 
 /* ************************************************************
                         INTERFACES
@@ -24,6 +25,7 @@ interface FooterLink {
 interface FooterColumn {
     title: string;
     links: FooterLink[];
+    socialLinks?: FooterLink[];
 }
 
 interface FooterProps {
@@ -42,6 +44,14 @@ interface FooterProps {
         acnBold: boolean;
         copyright: string;
         copyrightBold: boolean;
+        socialMedia?: {
+            instagram?: string;
+            facebook?: string;
+            youtube?: string;
+            pinterest?: string;
+            linkedin?: string;
+            tiktok?: string;
+        };
     };
 }
 
@@ -79,10 +89,15 @@ const Footer = ({ content }: FooterProps) => {
         {
             title: "Say Hi",
             links: [
-                { label: "Instagram", href: "https://instagram.com" },
-                { label: "Facebook", href: "https://facebook.com" },
-                { label: "Linked In", href: "https://linkedin.com" },
                 { label: "Contact", href: "/contact" }
+            ],
+            socialLinks: [
+                ...(content.socialMedia?.instagram ? [{ label: "Instagram", href: ensureAbsoluteUrl(content.socialMedia.instagram) || "" }] : []),
+                ...(content.socialMedia?.facebook ? [{ label: "Facebook", href: ensureAbsoluteUrl(content.socialMedia.facebook) || "" }] : []),
+                ...(content.socialMedia?.youtube ? [{ label: "YouTube", href: ensureAbsoluteUrl(content.socialMedia.youtube) || "" }] : []),
+                ...(content.socialMedia?.pinterest ? [{ label: "Pinterest", href: ensureAbsoluteUrl(content.socialMedia.pinterest) || "" }] : []),
+                ...(content.socialMedia?.linkedin ? [{ label: "LinkedIn", href: ensureAbsoluteUrl(content.socialMedia.linkedin) || "" }] : []),
+                ...(content.socialMedia?.tiktok ? [{ label: "TikTok", href: ensureAbsoluteUrl(content.socialMedia.tiktok) || "" }] : []),
             ]
         }
     ];
@@ -177,6 +192,22 @@ const Footer = ({ content }: FooterProps) => {
                                             >
                                                 {link.label}
                                             </Link>
+                                        </motion.li>
+                                    ))}
+                                    {column.socialLinks && column.socialLinks.map((link, index) => (
+                                        <motion.li
+                                            key={`${link.label}-${link.href}-${index}`}
+                                            variants={itemVariants}
+                                        >
+                                            <a
+                                                href={link.href}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                aria-label={link.label}
+                                                className="text-white/70 hover:text-white transition-colors duration-300 block"
+                                            >
+                                                {link.label}
+                                            </a>
                                         </motion.li>
                                     ))}
                                 </motion.ul>

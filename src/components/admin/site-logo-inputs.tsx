@@ -7,13 +7,48 @@ import { FooterContent, FooterProps } from "@/app/_config";
 import useUpdatePage from "@/utils/hooks/useUpdatePage";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import Image from "next/image";
+import { Pencil } from "lucide-react";
+import { ensureAbsoluteUrl } from "@/utils/url";
 
 export default function SiteLogoInputs(props: FooterProps) {
 	const [siteLogo, setSiteLogo] = useState(
 		props.content.siteLogo || "/images/brightlogo.png",
 	);
+	const [instagram, setInstagram] = useState(props.content.socialMedia?.instagram || "");
+	const [facebook, setFacebook] = useState(props.content.socialMedia?.facebook || "");
+	const [youtube, setYoutube] = useState(props.content.socialMedia?.youtube || "");
+	const [pinterest, setPinterest] = useState(props.content.socialMedia?.pinterest || "");
+	const [linkedin, setLinkedin] = useState(props.content.socialMedia?.linkedin || "");
+	const [tiktok, setTiktok] = useState(props.content.socialMedia?.tiktok || "");
+
+	// Section title states
+	const [sectionTitles, setSectionTitles] = useState({
+		logo: props.content.sectionTitles?.logo || "Site Logo",
+		social: props.content.sectionTitles?.social || "Social Media Links",
+	});
+	const [editingSection, setEditingSection] = useState<string | null>(null);
+	const [editTitleValue, setEditTitleValue] = useState("");
 
 	const { isSaving, updatePage } = useUpdatePage<FooterContent>("footer");
+
+	const handleTitleEdit = (sectionKey: string) => {
+		setEditingSection(sectionKey);
+		setEditTitleValue(sectionTitles[sectionKey as keyof typeof sectionTitles]);
+	};
+
+	const handleTitleSave = (sectionKey: string) => {
+		setSectionTitles((prev) => ({
+			...prev,
+			[sectionKey]: editTitleValue,
+		}));
+		setEditingSection(null);
+		setEditTitleValue("");
+	};
+
+	const handleTitleCancel = () => {
+		setEditingSection(null);
+		setEditTitleValue("");
+	};
 
 	const handleSave = async () => {
 		await updatePage({
@@ -21,6 +56,15 @@ export default function SiteLogoInputs(props: FooterProps) {
 			content: {
 				...props.content,
 				siteLogo,
+				socialMedia: {
+					instagram: ensureAbsoluteUrl(instagram),
+					facebook: ensureAbsoluteUrl(facebook),
+					youtube: ensureAbsoluteUrl(youtube),
+					pinterest: ensureAbsoluteUrl(pinterest),
+					linkedin: ensureAbsoluteUrl(linkedin),
+					tiktok: ensureAbsoluteUrl(tiktok),
+				},
+				sectionTitles,
 			},
 		});
 	};
@@ -35,9 +79,59 @@ export default function SiteLogoInputs(props: FooterProps) {
 			<div className="min-h-screen bg-white">
 				<div className="max-w-7xl mx-auto px-4 py-4">
 					<Accordion type="multiple" className="space-y-8">
+						{/* ************************************************************
+						   SITE LOGO SECTION
+						****************************************************************/}
 						<AccordionItem value="site-logo" className="bg-brand-yellow/10 border border-brand-yellow/20 p-8 rounded-2xl">
-							<AccordionTrigger className="text-xl text-brand-black font-bold hover:no-underline">
-								Site Logo
+							<AccordionTrigger 
+								className="text-xl text-brand-black font-bold hover:no-underline"
+								editIcon={editingSection !== "logo" ? (
+									<button
+										onClick={(e) => {
+											e.stopPropagation();
+											handleTitleEdit("logo");
+										}}
+										className="p-2 hover:bg-black/10 rounded-full border border-brand-yellow transition-colors w-8 h-8 flex items-center justify-center"
+									>
+										<Pencil size={16} className="text-brand-black" />
+									</button>
+								) : null}
+							>
+								{editingSection === "logo" ? (
+									<div className="flex items-center gap-3 flex-1" onClick={(e) => e.stopPropagation()}>
+										<input
+											type="text"
+											value={editTitleValue}
+											onChange={(e) => setEditTitleValue(e.target.value)}
+											onKeyDown={(e) => {
+												if (e.key === "Enter") handleTitleSave("logo");
+												if (e.key === "Escape") handleTitleCancel();
+											}}
+											className="flex-1 px-2 py-1 border border-brand-black/20 rounded text-xl font-bold bg-white"
+											autoFocus
+										/>
+										<button
+											onClick={(e) => {
+												e.stopPropagation();
+												handleTitleSave("logo");
+											}}
+											className="px-3 py-1 bg-green-100 text-green-700 rounded text-sm hover:bg-green-200 transition-colors border border-green-300"
+										>
+											Save
+										</button>
+										<button
+											onClick={(e) => {
+												e.stopPropagation();
+												handleTitleCancel();
+											}}
+											className="px-3 py-1 bg-red-100 text-red-700 rounded text-sm hover:bg-red-200 transition-colors border border-red-300"
+										>
+											Cancel
+										</button>
+									</div>
+								) : (
+									<span>{sectionTitles.logo}</span>
+								)}
 							</AccordionTrigger>
 							<AccordionContent>
 								<section className="pt-4">
@@ -105,6 +199,140 @@ export default function SiteLogoInputs(props: FooterProps) {
 													</div>
 												</div>
 											</div>
+										</div>
+									</div>
+								</section>
+							</AccordionContent>
+						</AccordionItem>
+
+						{/* ************************************************************
+						   SOCIAL MEDIA LINKS SECTION
+						****************************************************************/}
+						<AccordionItem value="social-media" className="bg-brand-teal/10 border border-brand-teal/20 p-8 rounded-2xl">
+							<AccordionTrigger 
+								className="text-xl text-brand-black font-bold hover:no-underline"
+								editIcon={editingSection !== "social" ? (
+									<button
+										onClick={(e) => {
+											e.stopPropagation();
+											handleTitleEdit("social");
+										}}
+										className="p-2 hover:bg-black/10 rounded-full border border-brand-yellow transition-colors w-8 h-8 flex items-center justify-center"
+									>
+										<Pencil size={16} className="text-brand-black" />
+									</button>
+								) : null}
+							>
+								{editingSection === "social" ? (
+									<div className="flex items-center gap-3 flex-1" onClick={(e) => e.stopPropagation()}>
+										<input
+											type="text"
+											value={editTitleValue}
+											onChange={(e) => setEditTitleValue(e.target.value)}
+											onKeyDown={(e) => {
+												if (e.key === "Enter") handleTitleSave("social");
+												if (e.key === "Escape") handleTitleCancel();
+											}}
+											className="flex-1 px-2 py-1 border border-brand-black/20 rounded text-xl font-bold bg-white"
+											autoFocus
+										/>
+										<button
+											onClick={(e) => {
+												e.stopPropagation();
+												handleTitleSave("social");
+											}}
+											className="px-3 py-1 bg-green-100 text-green-700 rounded text-sm hover:bg-green-200 transition-colors border border-green-300"
+										>
+											Save
+										</button>
+										<button
+											onClick={(e) => {
+												e.stopPropagation();
+												handleTitleCancel();
+											}}
+											className="px-3 py-1 bg-red-100 text-red-700 rounded text-sm hover:bg-red-200 transition-colors border border-red-300"
+										>
+											Cancel
+										</button>
+									</div>
+								) : (
+									<span>{sectionTitles.social}</span>
+								)}
+							</AccordionTrigger>
+							<AccordionContent>
+								<section className="pt-4">
+									<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+										<div>
+											<label className="block text-brand-black text-sm font-medium mb-2">
+												Instagram URL
+											</label>
+											<input
+												type="url"
+												value={instagram}
+												onChange={(e) => setInstagram(e.target.value)}
+												placeholder="https://instagram.com/yourprofile"
+												className="w-full p-3 bg-brand-black text-white rounded-lg border border-gray-700 focus:border-white transition-colors"
+											/>
+										</div>
+										<div>
+											<label className="block text-brand-black text-sm font-medium mb-2">
+												Facebook URL
+											</label>
+											<input
+												type="url"
+												value={facebook}
+												onChange={(e) => setFacebook(e.target.value)}
+												placeholder="https://facebook.com/yourpage"
+												className="w-full p-3 bg-brand-black text-white rounded-lg border border-gray-700 focus:border-white transition-colors"
+											/>
+										</div>
+										<div>
+											<label className="block text-brand-black text-sm font-medium mb-2">
+												YouTube URL
+											</label>
+											<input
+												type="url"
+												value={youtube}
+												onChange={(e) => setYoutube(e.target.value)}
+												placeholder="https://youtube.com/@yourchannel"
+												className="w-full p-3 bg-brand-black text-white rounded-lg border border-gray-700 focus:border-white transition-colors"
+											/>
+										</div>
+										<div>
+											<label className="block text-brand-black text-sm font-medium mb-2">
+												Pinterest URL
+											</label>
+											<input
+												type="url"
+												value={pinterest}
+												onChange={(e) => setPinterest(e.target.value)}
+												placeholder="https://pinterest.com/yourprofile"
+												className="w-full p-3 bg-brand-black text-white rounded-lg border border-gray-700 focus:border-white transition-colors"
+											/>
+										</div>
+										<div>
+											<label className="block text-brand-black text-sm font-medium mb-2">
+												LinkedIn URL
+											</label>
+											<input
+												type="url"
+												value={linkedin}
+												onChange={(e) => setLinkedin(e.target.value)}
+												placeholder="https://linkedin.com/company/yourcompany"
+												className="w-full p-3 bg-brand-black text-white rounded-lg border border-gray-700 focus:border-white transition-colors"
+											/>
+										</div>
+										<div>
+											<label className="block text-brand-black text-sm font-medium mb-2">
+												TikTok URL
+											</label>
+											<input
+												type="url"
+												value={tiktok}
+												onChange={(e) => setTiktok(e.target.value)}
+												placeholder="https://tiktok.com/@yourprofile"
+												className="w-full p-3 bg-brand-black text-white rounded-lg border border-gray-700 focus:border-white transition-colors"
+											/>
 										</div>
 									</div>
 								</section>
