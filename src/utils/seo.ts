@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { seoPages } from "@/config/seo-pages";
 import { fetchSeoEntry } from "@/data/seo";
 
-const DEFAULT_TITLE = "Bright Leasing | Novated Leasing Made Easy";
-const DEFAULT_DESCRIPTION = "The smartest way to own and run a car. Novated leasing made easy — save money, skip the hassle, and enjoy the car you really want.";
-const DEFAULT_KEYWORDS = "novated leasing, salary packaging, car leasing, vehicle finance, Bright Leasing";
+const DEFAULT_TITLE = "";
+const DEFAULT_DESCRIPTION = "";
+const DEFAULT_KEYWORDS = "";
 
 export async function buildPageMetadata(
   slug: string,
@@ -24,7 +24,7 @@ export async function buildPageMetadata(
   const keywords = storedEntry?.keywords ?? fallbackKeywords;
 
   // Build canonical URL
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://brightleasing.com.au";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
   const canonicalPath = pageConfig?.path ?? "/";
   const canonicalUrl = `${baseUrl}${canonicalPath}`;
 
@@ -81,7 +81,7 @@ export function buildPostMetadata(
   basePath: string, // e.g., "/blog/posts", "/research", "/hyperbaric-indications"
   overrides?: Partial<Metadata>
 ): Metadata {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://brightleasing.com.au";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
   const canonicalUrl = `${baseUrl}${basePath}/${post.slug}`;
 
   // Use stored SEO fields, fallback to post title/excerpt

@@ -53,19 +53,19 @@ export default function AdminDashboard({ siteLogo }: AdminDashboardProps) {
 					animate={isInView ? "show" : "hidden"}
 					className="text-center mb-8"
 				>
-					<div className="flex flex-col items-center justify-center gap-4 mb-4">
+					<div className="flex flex-col items-center justify-center gap-2 mb-2">
 						<Image
 							src={siteLogo}
 							alt="Site Logo"
-							width={100}
-							height={50}
-							className="w-[150px] h-auto"
+							width={60}
+							height={30}
+							className="w-[80px] h-auto"
 						/>
-						<h1 className="text-brand-black leading-tight">
+						<h2 className="text-brand-black leading-tight text-lg font-semibold">
 							Content Management
-						</h1>
+						</h2>
 					</div>
-					<p className="text-brand-black/70 text-small max-w-2xl mx-auto">
+					<p className="text-brand-black/70 text-xs max-w-2xl mx-auto">
 						Take control of your website content and make updates in real-time
 					</p>
 				</motion.div>

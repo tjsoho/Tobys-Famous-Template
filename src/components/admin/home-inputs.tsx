@@ -198,6 +198,7 @@ export default function HomeAdminInputs(props: HomePageProps) {
 	});
 	const [editingSection, setEditingSection] = useState<string | null>(null);
 	const [editTitleValue, setEditTitleValue] = useState("");
+	const [activeSection, setActiveSection] = useState("hero");
 
 	const { isSaving, updatePage } = useUpdatePage<HomePageContent>("home");
 
@@ -318,6 +319,16 @@ export default function HomeAdminInputs(props: HomePageProps) {
 		});
 	};
 
+	const sectionOrder: Array<keyof typeof sectionTitles> = [
+		"hero",
+		"section2",
+		"section3",
+		"section4",
+		"section5",
+		"section6",
+		"section7",
+	];
+
 	return (
 		<div>
 			<SaveBanner
@@ -327,13 +338,43 @@ export default function HomeAdminInputs(props: HomePageProps) {
 			/>
 			<div className="min-h-screen bg-white">
 				<div className="max-w-7xl mx-auto px-4 py-4">
-					<Accordion type="multiple" className="space-y-8">
+					<div className="mb-4 flex flex-wrap items-center gap-2 rounded-xl border border-white/10 bg-black px-3 py-3">
+						{sectionOrder.map((sectionKey) => {
+							const isActive = activeSection === sectionKey;
+							return (
+								<button
+									key={sectionKey}
+									type="button"
+									onClick={() => setActiveSection(sectionKey)}
+									className={`rounded-full border px-3 py-1 text-xs transition-colors ${
+										isActive
+											? "border-brand-yellow bg-brand-yellow text-brand-black"
+											: "border-white/20 bg-transparent text-white hover:border-white/40"
+									}`}
+								>
+									{sectionTitles[sectionKey]}
+								</button>
+							);
+						})}
+					</div>
+
+					<Accordion
+						type="single"
+						value={activeSection}
+						onValueChange={(value) => {
+							if (value) setActiveSection(value);
+						}}
+						className="space-y-8"
+					>
 						{/* ***************************************************************
 						   HERO SECTION
 						****************************************************************/}
-						<AccordionItem value="hero" className="bg-brand-yellow/10 border border-brand-yellow/20 p-6 rounded-2xl">
+						<AccordionItem
+							value="hero"
+							className={activeSection === "hero" ? "bg-brand-yellow/10 border border-brand-yellow/20 p-6 rounded-2xl" : "hidden"}
+						>
 							<AccordionTrigger 
-								className="text-xl text-brand-black font-bold hover:no-underline"
+								className="hidden"
 								editIcon={editingSection !== "hero" ? (
 									<button
 										onClick={(e) => {
@@ -481,9 +522,12 @@ export default function HomeAdminInputs(props: HomePageProps) {
 						{/* ***************************************************************
 							SECTION 2: WHAT IS NOVATED LEASING
 						****************************************************************/}
-						<AccordionItem value="section2" className="bg-brand-teal/10 border border-brand-teal/20 p-8 rounded-2xl">
+						<AccordionItem
+							value="section2"
+							className={activeSection === "section2" ? "bg-brand-teal/10 border border-brand-teal/20 p-8 rounded-2xl" : "hidden"}
+						>
 							<AccordionTrigger 
-								className="text-xl text-brand-black font-bold hover:no-underline"
+								className="hidden"
 								editIcon={editingSection !== "section2" ? (
 									<button
 										onClick={(e) => {
@@ -589,9 +633,12 @@ export default function HomeAdminInputs(props: HomePageProps) {
 						{/* ***************************************************************
 							SECTION 3: WHY CHOOSE BRIGHT LEASING TILES
 						****************************************************************/}
-						<AccordionItem value="section3" className="bg-brand-teal/10 border border-brand-teal/20 p-8 rounded-2xl">
+						<AccordionItem
+							value="section3"
+							className={activeSection === "section3" ? "bg-brand-teal/10 border border-brand-teal/20 p-8 rounded-2xl" : "hidden"}
+						>
 							<AccordionTrigger 
-								className="text-xl text-brand-black font-bold hover:no-underline"
+								className="hidden"
 								editIcon={editingSection !== "section3" ? (
 									<button
 										onClick={(e) => {
@@ -952,9 +999,12 @@ export default function HomeAdminInputs(props: HomePageProps) {
 						{/* ***************************************************************
 							SECTION 4: HOW IT WORKS
 						****************************************************************/}
-						<AccordionItem value="section4" className="bg-brand-teal/10 border border-brand-teal/20 p-8 rounded-2xl">
+						<AccordionItem
+							value="section4"
+							className={activeSection === "section4" ? "bg-brand-teal/10 border border-brand-teal/20 p-8 rounded-2xl" : "hidden"}
+						>
 							<AccordionTrigger 
-								className="text-xl text-brand-black font-bold hover:no-underline"
+								className="hidden"
 								editIcon={editingSection !== "section4" ? (
 									<button
 										onClick={(e) => {
@@ -1297,9 +1347,12 @@ export default function HomeAdminInputs(props: HomePageProps) {
 						{/* ***************************************************************
 							SECTION 5: PROMOTIONAL BANNER
 						****************************************************************/}
-						<AccordionItem value="section5" className="bg-brand-teal/10 border border-brand-teal/20 p-8 rounded-2xl">
+						<AccordionItem
+							value="section5"
+							className={activeSection === "section5" ? "bg-brand-teal/10 border border-brand-teal/20 p-8 rounded-2xl" : "hidden"}
+						>
 							<AccordionTrigger 
-								className="text-xl text-brand-black font-bold hover:no-underline"
+								className="hidden"
 								editIcon={editingSection !== "section5" ? (
 									<button
 										onClick={(e) => {
@@ -1459,9 +1512,12 @@ export default function HomeAdminInputs(props: HomePageProps) {
 						{/* ***************************************************************
 							SECTION 6: CUSTOMER SUCCESS STORIES
 						****************************************************************/}
-						<AccordionItem value="section6" className="bg-brand-teal/10 border border-brand-teal/20 p-8 rounded-2xl">
+						<AccordionItem
+							value="section6"
+							className={activeSection === "section6" ? "bg-brand-teal/10 border border-brand-teal/20 p-8 rounded-2xl" : "hidden"}
+						>
 							<AccordionTrigger 
-								className="text-xl text-brand-black font-bold hover:no-underline"
+								className="hidden"
 								editIcon={editingSection !== "section6" ? (
 									<button
 										onClick={(e) => {
@@ -1822,9 +1878,12 @@ export default function HomeAdminInputs(props: HomePageProps) {
 						{/* ***************************************************************
 							SECTION 7: FAQ ACCORDION
 						****************************************************************/}
-						<AccordionItem value="section7" className="bg-brand-teal/10 border border-brand-teal/20 p-8 rounded-2xl">
+						<AccordionItem
+							value="section7"
+							className={activeSection === "section7" ? "bg-brand-teal/10 border border-brand-teal/20 p-8 rounded-2xl" : "hidden"}
+						>
 							<AccordionTrigger 
-								className="text-xl text-brand-black font-bold hover:no-underline"
+								className="hidden"
 								editIcon={editingSection !== "section7" ? (
 									<button
 										onClick={(e) => {

@@ -31,6 +31,7 @@ export default function FooterAdminInputs(props: FooterProps) {
 	});
 	const [editingSection, setEditingSection] = useState<string | null>(null);
 	const [editTitleValue, setEditTitleValue] = useState("");
+	const [activeSection, setActiveSection] = useState("logo");
 
 	const { isSaving, updatePage } = useUpdatePage<FooterContent>("footer");
 
@@ -78,6 +79,8 @@ export default function FooterAdminInputs(props: FooterProps) {
 		});
 	};
 
+	const sectionOrder: Array<keyof typeof sectionTitles> = ["logo", "content"];
+
 	return (
 		<div>
 			<SaveBanner
@@ -87,13 +90,32 @@ export default function FooterAdminInputs(props: FooterProps) {
 			/>
 			<div className="min-h-screen bg-white">
 				<div className="max-w-7xl mx-auto px-4 py-4">
-					<Accordion type="multiple" className="space-y-8">
+					<div className="mb-4 flex flex-wrap items-center gap-2 rounded-xl border border-white/10 bg-black px-3 py-3">
+						{sectionOrder.map((sectionKey) => {
+							const isActive = activeSection === sectionKey;
+							return (
+								<button
+									key={sectionKey}
+									type="button"
+									onClick={() => setActiveSection(sectionKey)}
+									className={`rounded-full border px-3 py-1 text-xs transition-colors ${
+										isActive
+											? "border-brand-yellow bg-brand-yellow text-brand-black"
+											: "border-white/20 bg-transparent text-white hover:border-white/40"
+									}`}
+								>
+									{sectionTitles[sectionKey]}
+								</button>
+							);
+						})}
+					</div>
+					<Accordion type="single" value={activeSection} onValueChange={(value) => value && setActiveSection(value)} className="space-y-8">
 						{/* ***************************************************************
 						   FOOTER LOGO SECTION
 						****************************************************************/}
-						<AccordionItem value="logo" className="bg-brand-yellow/10 border border-brand-yellow/20 p-6 rounded-2xl">
+						<AccordionItem value="logo" className={activeSection === "logo" ? "bg-brand-yellow/10 border border-brand-yellow/20 p-6 rounded-2xl" : "hidden"}>
 							<AccordionTrigger 
-								className="text-xl text-brand-black font-bold hover:no-underline"
+								className="hidden"
 								editIcon={editingSection !== "logo" ? (
 									<button
 										onClick={(e) => {
@@ -172,9 +194,9 @@ export default function FooterAdminInputs(props: FooterProps) {
 						{/* ***************************************************************
 						   FOOTER CONTENT SECTION
 						****************************************************************/}
-						<AccordionItem value="content" className="bg-brand-teal/10 border border-brand-teal/20 p-8 rounded-2xl">
+						<AccordionItem value="content" className={activeSection === "content" ? "bg-brand-teal/10 border border-brand-teal/20 p-8 rounded-2xl" : "hidden"}>
 							<AccordionTrigger 
-								className="text-xl text-brand-black font-bold hover:no-underline"
+								className="hidden"
 								editIcon={editingSection !== "content" ? (
 									<button
 										onClick={(e) => {

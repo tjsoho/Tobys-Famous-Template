@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { upsertSeoEntryAction } from "@/server-actions/seo";
+import { SaveBanner } from "@/components/core/save-banner";
 
 import toast from "react-hot-toast";
 
@@ -80,8 +81,21 @@ export default function SeoManager({ pages: initialPages, baseUrl = "https://bri
     );
   };
 
+  const handleBannerSave = async () => {
+    if (!editingSlug) {
+      toast("Select a page and click Edit before saving SEO changes.");
+      return;
+    }
+    await handleSave(editingSlug);
+  };
+
   return (
     <div className="min-h-screen bg-white">
+      <SaveBanner
+        pageTitle="SEO"
+        onSave={handleBannerSave}
+        isSaving={isSaving}
+      />
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Search and Page Count */}
         <div className="mb-6 flex items-center justify-between gap-4">

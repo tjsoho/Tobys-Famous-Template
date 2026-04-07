@@ -28,6 +28,7 @@ export default function SiteLogoInputs(props: FooterProps) {
 	});
 	const [editingSection, setEditingSection] = useState<string | null>(null);
 	const [editTitleValue, setEditTitleValue] = useState("");
+	const [activeSection, setActiveSection] = useState("site-logo");
 
 	const { isSaving, updatePage } = useUpdatePage<FooterContent>("footer");
 
@@ -69,6 +70,11 @@ export default function SiteLogoInputs(props: FooterProps) {
 		});
 	};
 
+	const sectionOrder = [
+		{ key: "site-logo", label: sectionTitles.logo },
+		{ key: "social-media", label: sectionTitles.social },
+	];
+
 	return (
 		<div>
 			<SaveBanner
@@ -78,13 +84,32 @@ export default function SiteLogoInputs(props: FooterProps) {
 			/>
 			<div className="min-h-screen bg-white">
 				<div className="max-w-7xl mx-auto px-4 py-4">
-					<Accordion type="multiple" className="space-y-8">
+					<div className="mb-4 flex flex-wrap items-center gap-2 rounded-xl border border-white/10 bg-black px-3 py-3">
+						{sectionOrder.map((section) => {
+							const isActive = activeSection === section.key;
+							return (
+								<button
+									key={section.key}
+									type="button"
+									onClick={() => setActiveSection(section.key)}
+									className={`rounded-full border px-3 py-1 text-xs transition-colors ${
+										isActive
+											? "border-brand-yellow bg-brand-yellow text-brand-black"
+											: "border-white/20 bg-transparent text-white hover:border-white/40"
+									}`}
+								>
+									{section.label}
+								</button>
+							);
+						})}
+					</div>
+					<Accordion type="single" value={activeSection} onValueChange={(value) => value && setActiveSection(value)} className="space-y-8">
 						{/* ************************************************************
 						   SITE LOGO SECTION
 						****************************************************************/}
-						<AccordionItem value="site-logo" className="bg-brand-yellow/10 border border-brand-yellow/20 p-8 rounded-2xl">
+						<AccordionItem value="site-logo" className={activeSection === "site-logo" ? "bg-brand-yellow/10 border border-brand-yellow/20 p-8 rounded-2xl" : "hidden"}>
 							<AccordionTrigger 
-								className="text-xl text-brand-black font-bold hover:no-underline"
+								className="hidden"
 								editIcon={editingSection !== "logo" ? (
 									<button
 										onClick={(e) => {
@@ -208,9 +233,9 @@ export default function SiteLogoInputs(props: FooterProps) {
 						{/* ************************************************************
 						   SOCIAL MEDIA LINKS SECTION
 						****************************************************************/}
-						<AccordionItem value="social-media" className="bg-brand-teal/10 border border-brand-teal/20 p-8 rounded-2xl">
+						<AccordionItem value="social-media" className={activeSection === "social-media" ? "bg-brand-teal/10 border border-brand-teal/20 p-8 rounded-2xl" : "hidden"}>
 							<AccordionTrigger 
-								className="text-xl text-brand-black font-bold hover:no-underline"
+								className="hidden"
 								editIcon={editingSection !== "social" ? (
 									<button
 										onClick={(e) => {

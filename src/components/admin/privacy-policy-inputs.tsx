@@ -131,6 +131,7 @@ export default function PrivacyPolicyInputs(props: PrivacyPolicyProps) {
 	});
 	const [editingSection, setEditingSection] = useState<string | null>(null);
 	const [editTitleValue, setEditTitleValue] = useState("");
+	const [activeSection, setActiveSection] = useState("section1");
 
 	const { isSaving, updatePage } = useUpdatePage<PrivacyPolicyContent>("privacy-policy");
 
@@ -187,6 +188,8 @@ export default function PrivacyPolicyInputs(props: PrivacyPolicyProps) {
 		});
 	};
 
+	const sectionOrder = sectionLabels.map((_, index) => `section${index + 1}`);
+
 	return (
 		<div>
 			<SaveBanner
@@ -197,7 +200,26 @@ export default function PrivacyPolicyInputs(props: PrivacyPolicyProps) {
 
 			<div className="min-h-screen bg-white">
 				<div className="max-w-7xl mx-auto px-4 py-4">
-					<Accordion type="multiple" className="space-y-8">
+					<div className="mb-4 flex flex-wrap items-center gap-2 rounded-xl border border-white/10 bg-black px-3 py-3">
+						{sectionOrder.map((sectionKey) => {
+							const isActive = activeSection === sectionKey;
+							return (
+								<button
+									key={sectionKey}
+									type="button"
+									onClick={() => setActiveSection(sectionKey)}
+									className={`rounded-full border px-3 py-1 text-xs transition-colors ${
+										isActive
+											? "border-brand-yellow bg-brand-yellow text-brand-black"
+											: "border-white/20 bg-transparent text-white hover:border-white/40"
+									}`}
+								>
+									{sectionTitles[sectionKey]}
+								</button>
+							);
+						})}
+					</div>
+					<Accordion type="single" value={activeSection} onValueChange={(value) => value && setActiveSection(value)} className="space-y-8">
 						{sections.map((section, index) => {
 							const sectionKey = `section${index + 1}`;
 							const isYellow = index % 2 === 0;
@@ -205,10 +227,14 @@ export default function PrivacyPolicyInputs(props: PrivacyPolicyProps) {
 								<AccordionItem
 									key={sectionKey}
 									value={sectionKey}
-									className={`${isYellow ? 'bg-brand-yellow/10 border border-brand-yellow/20' : 'bg-brand-teal/10 border border-brand-teal/20'} p-8 rounded-2xl`}
+									className={
+										activeSection === sectionKey
+											? `${isYellow ? "bg-brand-yellow/10 border border-brand-yellow/20" : "bg-brand-teal/10 border border-brand-teal/20"} p-8 rounded-2xl`
+											: "hidden"
+									}
 								>
 									<AccordionTrigger 
-										className="text-xl text-brand-black font-bold hover:no-underline"
+										className="hidden"
 										editIcon={editingSection !== sectionKey ? (
 											<button
 												onClick={(e) => {

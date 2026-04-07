@@ -1,11 +1,10 @@
 import { fetchSeoEntries } from "@/data/seo";
 import { seoPages } from "@/config/seo-pages";
 import SeoManager from "@/components/admin/seo/SeoManager";
-import AdminNavigation from "@/components/admin/AdminNavigation";
 
 export default async function AdminSeoPage() {
   const seoEntries = await fetchSeoEntries();
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://brightleasing.com.au";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
   // Merge config with stored data
   const pagesWithSeo = seoPages.map((page) => {
@@ -20,10 +19,7 @@ export default async function AdminSeoPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="mb-8">
-          <AdminNavigation />
-        </div>
+      <div className="max-w-7xl mx-auto">
         <SeoManager pages={pagesWithSeo} baseUrl={baseUrl} />
       </div>
     </div>

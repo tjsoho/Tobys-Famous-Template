@@ -12,13 +12,24 @@
 import Link from "next/link";
 import { motion, useInView } from "framer-motion";
 import React from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+    faHouse,
+    faPhone,
+    faArrowDown,
+    faUsers,
+    faPenToSquare,
+    faCircleQuestion,
+    faMagnifyingGlass,
+    faImage,
+} from "@fortawesome/free-solid-svg-icons";
 
 /* ************************************************************
                         INTERFACES
 ************************************************************ */
 interface AdminTile {
     href: string;
-    icon: string;
+    icon: React.ReactNode;
     title: string;
     description: string;
     color: string;
@@ -70,97 +81,67 @@ const AdminTiles = () => {
     const adminTiles: AdminTile[] = [
         {
             href: "/admin/home",
-            icon: "🏠",
+            icon: <FontAwesomeIcon icon={faHouse} />,
             title: "Home",
             description: "Manage homepage content",
             color: "bg-brand-yellow text-brand-black"
         },
         {
             href: "/admin/contact",
-            icon: "📞",
+            icon: <FontAwesomeIcon icon={faPhone} />,
             title: "Contact",
             description: "Manage contact page content",
             color: "bg-brand-teal text-white"
         },
         {
             href: "/admin/footer",
-            icon: "🦶",
+            icon: <FontAwesomeIcon icon={faArrowDown} />,
             title: "Footer",
             description: "Manage footer content",
             color: "bg-gray-300 text-brand-black"
         },
         {
             href: "/admin/about-us",
-            icon: "👥",
+            icon: <FontAwesomeIcon icon={faUsers} />,
             title: "About Us",
             description: "Manage company information",
             color: "bg-gray-300 text-brand-black"
         },
         {
-            href: "/admin/team",
-            icon: "👥",
-            title: "Team",
-            description: "Manage team members",
-            color: "bg-brand-yellow text-brand-black"
-        },
-        {
             href: "/admin/blog",
-            icon: "📝",
+            icon: <FontAwesomeIcon icon={faPenToSquare} />,
             title: "Articles",
             description: "Manage blog posts and content",
             color: "bg-brand-teal text-white"
         },
-
         {
             href: "/admin/faqs",
-            icon: "❓",
+            icon: <FontAwesomeIcon icon={faCircleQuestion} />,
             title: "FAQs",
             description: "Manage FAQs and categories",
             color: "bg-brand-yellow text-brand-black"
         },
         {
-            href: "/admin/privacy-policy",
-            icon: "🔒",
-            title: "Privacy Policy",
-            description: "Manage privacy policy content",
-            color: "bg-brand-teal text-white"
-        },
-        {
-            href: "/admin/terms-and-conditions",
-            icon: "📋",
-            title: "Terms & Conditions",
-            description: "Manage terms and conditions content",
-            color: "bg-brand-yellow text-brand-black"
-        },
-        {
-            href: "/admin/terms-of-use",
-            icon: "📄",
-            title: "Terms of Use",
-            description: "Manage terms of use content",
-            color: "bg-brand-teal text-white"
-        },
-        {
             href: "/admin/seo",
-            icon: "🔍",
+            icon: <FontAwesomeIcon icon={faMagnifyingGlass} />,
             title: "SEO",
             description: "Manage SEO metadata for all pages",
             color: "bg-brand-yellow text-brand-black"
         },
         {
             href: "/admin/site-logo",
-            icon: "🖼️",
+            icon: <FontAwesomeIcon icon={faImage} />,
             title: "Site Logo",
             description: "Manage site logo for header and admin",
             color: "bg-brand-teal text-white"
         },
-
     ];
 
     /* ************************************************************
                             RENDER
     ************************************************************ */
     return (
-        <div ref={ref} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div ref={ref} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
             <motion.div
                 variants={containerVariants}
                 initial="hidden"
@@ -171,14 +152,14 @@ const AdminTiles = () => {
                     <motion.div key={`${tile.href}-${index}`} variants={itemVariants}>
                         <Link
                             href={tile.href}
-                            className={`group flex flex-col justify-center h-64 rounded-2xl p-8 ${tile.color} hover:scale-105 transition-all duration-300 hover:shadow-xl block`}
+                            className={`group flex flex-col justify-center h-32 rounded-xl p-4 ${tile.color} hover:scale-105 transition-all duration-300 hover:shadow-lg block`}
                         >
                             <div className="text-center">
-                                <div className="w-12 h-12 mx-auto mb-4 bg-white/20 rounded-full flex items-center justify-center group-hover:bg-white/30 transition-colors duration-300">
-                                    <span className="text-2xl">{tile.icon}</span>
+                                <div className="w-8 h-8 mx-auto mb-2 bg-white/20 rounded-full flex items-center justify-center group-hover:bg-white/30 transition-colors duration-300">
+                                    <span className="text-sm">{tile.icon}</span>
                                 </div>
-                                <h2 className="text-md font-semibold mb-2">{tile.title}</h2>
-                                <p className="text-small opacity-80">{tile.description}</p>
+                                <h6 className="font-semibold mb-1">{tile.title}</h6>
+                                
                             </div>
                         </Link>
                     </motion.div>
