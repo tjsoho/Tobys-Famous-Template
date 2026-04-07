@@ -6,18 +6,16 @@
  * Automates the entire Supabase project setup after creating the project in the dashboard.
  *
  * What it does:
- * 1. Prompts for Supabase URL, anon key, and service role key
- * 2. Prompts for admin email + password
- * 3. Writes .env.local
- * 4. Runs all SQL from setup-database.sql (tables, indexes, RLS, triggers)
- * 5. Creates the site-images storage bucket (public, 500KB limit)
- * 6. Applies storage policies (handled by SQL)
+ * 1. Runs npm install (so dependencies are available)
+ * 2. Prompts for Supabase URL, anon key, and service role key
+ * 3. Prompts for admin email + password
+ * 4. Writes .env.local
+ * 5. Guides you to run setup-database.sql in Supabase dashboard
+ * 6. Creates the site-images storage bucket (public, 500KB limit)
  * 7. Creates the admin auth user
  * 8. Optionally syncs images from public/images
- * 9. Runs npm install if node_modules is missing
  */
 
-import { createClient } from "@supabase/supabase-js";
 import * as readline from "readline";
 import * as fs from "fs";
 import * as path from "path";
@@ -48,7 +46,7 @@ function log(emoji, message) {
 }
 
 function logStep(step, total, message) {
-  console.log(`\n[${ step }/${ total }] ${message}`);
+  console.log(`\n[${step}/${total}] ${message}`);
   console.log("─".repeat(50));
 }
 
@@ -66,9 +64,33 @@ async function main() {
   const TOTAL_STEPS = 7;
 
   // ──────────────────────────────────────────────
-  // STEP 1: Collect credentials
+  // STEP 1: Install dependencies
   // ──────────────────────────────────────────────
-  logStep(1, TOTAL_STEPS, "Supabase Credentials");
+  logStep(1, TOTAL_STEPS, "Installing dependencies");
+
+  const nodeModulesPath = path.join(ROOT_DIR, "node_modules");
+
+  if (fs.existsSync(nodeModulesPath)) {
+    log("✅", "node_modules already exists — skipping install");
+  } else {
+    log("⏳", "Running npm install...");
+    try {
+      execSync("npm install", { cwd: ROOT_DIR, stdio: "inherit" });
+      log("✅", "Dependencies installed");
+    } catch {
+      log("❌", "npm install failed — run it manually and re-run this script");
+      rl.close();
+      process.exit(1);
+    }
+  }
+
+  // Now dynamically import Supabase (available after npm install)
+  const { createClient } = await import("@supabase/supabase-js");
+
+  // ──────────────────────────────────────────────
+  // STEP 2: Collect credentials
+  // ──────────────────────────────────────────────
+  logStep(2, TOTAL_STEPS, "Supabase Credentials");
 
   console.log("Get these from: Supabase Dashboard > Project Settings > API\n");
 
@@ -78,12 +100,14 @@ async function main() {
 
   if (!supabaseUrl || !anonKey || !serviceRoleKey) {
     console.error("\n❌ All three Supabase credentials are required.");
+    rl.close();
     process.exit(1);
   }
 
   // Validate URL format
   if (!supabaseUrl.includes("supabase.co")) {
     console.error("\n❌ Invalid Supabase URL. Should look like: https://xxxxx.supabase.co");
+    rl.close();
     process.exit(1);
   }
 
@@ -93,6 +117,7 @@ async function main() {
 
   if (!adminEmail || !adminPassword || adminPassword.length < 6) {
     console.error("\n❌ Valid admin email and password (6+ chars) required.");
+    rl.close();
     process.exit(1);
   }
 
@@ -102,9 +127,9 @@ async function main() {
   });
 
   // ──────────────────────────────────────────────
-  // STEP 2: Write .env.local
+  // STEP 3: Write .env.local
   // ──────────────────────────────────────────────
-  logStep(2, TOTAL_STEPS, "Writing .env.local");
+  logStep(3, TOTAL_STEPS, "Writing .env.local");
 
   const envContent = `NEXT_PUBLIC_SUPABASE_URL=${supabaseUrl}
 NEXT_PUBLIC_SUPABASE_ANON_KEY=${anonKey}
@@ -119,123 +144,31 @@ NEXT_PUBLIC_HOTJAR_ID=
   log("✅", ".env.local created");
 
   // ──────────────────────────────────────────────
-  // STEP 3: Run database SQL
+  // STEP 4: Run database SQL
   // ──────────────────────────────────────────────
-  logStep(3, TOTAL_STEPS, "Creating database tables");
+  logStep(4, TOTAL_STEPS, "Database setup");
 
-  const sqlPath = path.join(ROOT_DIR, "setup-database.sql");
-  const fullSql = fs.readFileSync(sqlPath, "utf-8");
-
-  // Split SQL into individual statements, filtering out empty ones and comments-only blocks
-  // We need to handle multi-line statements (CREATE FUNCTION, DO blocks, etc.)
-  const statements = splitSqlStatements(fullSql);
-
-  let successCount = 0;
-  let skipCount = 0;
-  let errorCount = 0;
-
-  for (const stmt of statements) {
-    const trimmed = stmt.trim();
-    if (!trimmed) continue;
-
-    const { error } = await supabase.rpc("exec_sql", { sql: trimmed }).maybeSingle();
-
-    // exec_sql won't exist — use the REST SQL endpoint instead
-    // Supabase doesn't expose raw SQL via the JS client with service role
-    // We need to use the Management API or the pg REST endpoint
-  }
-
-  // Actually, the service role key can execute SQL via the Supabase Management API
-  // Let's use the /rest/v1/rpc approach or the SQL endpoint directly
-
-  // The correct approach: use the Supabase project ref and Management API
   const projectRef = supabaseUrl.replace("https://", "").replace(".supabase.co", "");
 
-  // Execute SQL via the Supabase SQL endpoint
-  const sqlResponse = await fetch(`${supabaseUrl}/rest/v1/rpc`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      apikey: serviceRoleKey,
-      Authorization: `Bearer ${serviceRoleKey}`,
-    },
-  });
+  log("📋", "Please run the SQL in the Supabase dashboard:");
+  console.log("");
+  console.log("   1. Go to: https://supabase.com/dashboard/project/" + projectRef + "/sql/new");
+  console.log("   2. Copy and paste the contents of setup-database.sql");
+  console.log("   3. Click 'Run'");
+  console.log("");
 
-  // The REST API doesn't support raw SQL. Let's use individual table creation
-  // via the Supabase client's from() — but that also doesn't create tables.
-
-  // Best approach: Execute each SQL statement via the pg-meta API
-  // URL: POST https://{project_ref}.supabase.co/pg/query
-
-  log("⏳", "Running SQL against database...");
-
-  const pgResponse = await fetch(`${supabaseUrl}/pg/query`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      apikey: serviceRoleKey,
-      Authorization: `Bearer ${serviceRoleKey}`,
-    },
-    body: JSON.stringify({ query: fullSql }),
-  });
-
-  if (pgResponse.ok) {
-    log("✅", "All database tables created successfully");
+  const runManually = await ask("  Have you run the SQL? (y to continue): ");
+  if (runManually.toLowerCase() === "y") {
+    log("✅", "Database tables created");
   } else {
-    // Fallback: try the Management API
-    const mgmtResponse = await fetch(
-      `https://api.supabase.com/v1/projects/${projectRef}/database/query`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${serviceRoleKey}`,
-        },
-        body: JSON.stringify({ query: fullSql }),
-      }
-    );
-
-    if (mgmtResponse.ok) {
-      log("✅", "All database tables created successfully");
-    } else {
-      // Final fallback: execute statements individually using the SQL API
-      log("⚠️", "Direct SQL execution not available. Trying alternative method...");
-
-      // Try executing via the Supabase Dashboard SQL API
-      let tablesCreated = false;
-
-      // Check if we can at least verify the connection
-      const { data: testData, error: testError } = await supabase
-        .from("_dummy_test_")
-        .select("id")
-        .limit(1);
-
-      if (testError && testError.code === "PGRST204") {
-        // Connection works but table doesn't exist — expected
-        log("✅", "Database connection verified");
-      } else if (testError && testError.code === "PGRST205") {
-        log("✅", "Database connection verified");
-      }
-
-      // Output the SQL for manual execution
-      log("⚠️", "Automated SQL execution requires the Supabase Management API key.");
-      log("📋", "Please run the SQL manually:");
-      console.log("\n   1. Go to: https://supabase.com/dashboard/project/" + projectRef + "/sql/new");
-      console.log("   2. Copy and paste the contents of setup-database.sql");
-      console.log("   3. Click 'Run'\n");
-
-      const runManually = await ask("  Have you run the SQL? (y to continue, n to exit): ");
-      if (runManually.toLowerCase() !== "y") {
-        log("ℹ️", "You can run the SQL later and re-run this script.");
-        log("ℹ️", "The .env.local has been created, so 'npm run dev' will work once tables exist.");
-      }
-    }
+    log("⚠️", "You can run the SQL later. The .env.local has been created.");
+    log("ℹ️", "The app will work once the tables exist.");
   }
 
   // ──────────────────────────────────────────────
-  // STEP 4: Create storage bucket
+  // STEP 5: Create storage bucket
   // ──────────────────────────────────────────────
-  logStep(4, TOTAL_STEPS, "Creating storage bucket");
+  logStep(5, TOTAL_STEPS, "Creating storage bucket");
 
   const { data: existingBuckets } = await supabase.storage.listBuckets();
   const bucketExists = existingBuckets?.some((b) => b.name === "site-images");
@@ -265,9 +198,9 @@ NEXT_PUBLIC_HOTJAR_ID=
   }
 
   // ──────────────────────────────────────────────
-  // STEP 5: Create admin user
+  // STEP 6: Create admin user
   // ──────────────────────────────────────────────
-  logStep(5, TOTAL_STEPS, "Creating admin user");
+  logStep(6, TOTAL_STEPS, "Creating admin user");
 
   const { data: userData, error: userError } =
     await supabase.auth.admin.createUser({
@@ -288,9 +221,9 @@ NEXT_PUBLIC_HOTJAR_ID=
   }
 
   // ──────────────────────────────────────────────
-  // STEP 6: Sync images (optional)
+  // STEP 7: Sync images (optional)
   // ──────────────────────────────────────────────
-  logStep(6, TOTAL_STEPS, "Image sync");
+  logStep(7, TOTAL_STEPS, "Image sync");
 
   const imagesDir = path.join(ROOT_DIR, "public", "images");
   let imageFiles = [];
@@ -338,25 +271,6 @@ NEXT_PUBLIC_HOTJAR_ID=
   }
 
   // ──────────────────────────────────────────────
-  // STEP 7: Install dependencies
-  // ──────────────────────────────────────────────
-  logStep(7, TOTAL_STEPS, "Dependencies");
-
-  const nodeModulesPath = path.join(ROOT_DIR, "node_modules");
-
-  if (fs.existsSync(nodeModulesPath)) {
-    log("✅", "node_modules already exists — skipping install");
-  } else {
-    log("⏳", "Running npm install...");
-    try {
-      execSync("npm install", { cwd: ROOT_DIR, stdio: "inherit" });
-      log("✅", "Dependencies installed");
-    } catch {
-      log("❌", "npm install failed — run it manually");
-    }
-  }
-
-  // ──────────────────────────────────────────────
   // DONE
   // ──────────────────────────────────────────────
   console.log("\n");
@@ -379,52 +293,9 @@ NEXT_PUBLIC_HOTJAR_ID=
   rl.close();
 }
 
-// ============================================================================
-// SQL SPLITTING (handles multi-line functions, DO blocks, etc.)
-// ============================================================================
-
-function splitSqlStatements(sql) {
-  const statements = [];
-  let current = "";
-  let inDollarQuote = false;
-  const lines = sql.split("\n");
-
-  for (const line of lines) {
-    const trimmedLine = line.trim();
-
-    // Skip pure comment lines when not inside a statement
-    if (!current.trim() && trimmedLine.startsWith("--")) continue;
-
-    current += line + "\n";
-
-    // Track $$ dollar quoting (used in CREATE FUNCTION / DO blocks)
-    const dollarMatches = line.match(/\$\$/g);
-    if (dollarMatches) {
-      for (const _match of dollarMatches) {
-        inDollarQuote = !inDollarQuote;
-      }
-    }
-
-    // If we're not inside a dollar-quoted block and the line ends with ;
-    if (!inDollarQuote && trimmedLine.endsWith(";")) {
-      const stmt = current.trim();
-      if (stmt && !stmt.match(/^--/)) {
-        statements.push(stmt);
-      }
-      current = "";
-    }
-  }
-
-  // Catch any remaining content (like DO blocks)
-  if (current.trim()) {
-    statements.push(current.trim());
-  }
-
-  return statements;
-}
-
 // Run
 main().catch((err) => {
   console.error("\n❌ Setup failed:", err.message);
+  rl.close();
   process.exit(1);
 });
