@@ -317,10 +317,22 @@ NEXT_PUBLIC_HOTJAR_ID=
     const syncImages = await ask(`  Sync ${imageFiles.length} images to Supabase storage? (y/n): `);
 
     if (syncImages.toLowerCase() === "y") {
+      // MIME type lookup from file extension
+      const mimeTypes = {
+        ".png": "image/png",
+        ".jpg": "image/jpeg",
+        ".jpeg": "image/jpeg",
+        ".gif": "image/gif",
+        ".svg": "image/svg+xml",
+        ".webp": "image/webp",
+      };
+
       for (const file of imageFiles) {
         const filePath = path.join(imagesDir, file);
         const fileBuffer = fs.readFileSync(filePath);
         const stats = fs.statSync(filePath);
+        const ext = path.extname(file).toLowerCase();
+        const contentType = mimeTypes[ext] || "image/png";
 
         if (stats.size > 512000) {
           log("⚠️", `Skipping ${file} (${(stats.size / 1024).toFixed(0)}KB > 500KB limit)`);
@@ -332,6 +344,7 @@ NEXT_PUBLIC_HOTJAR_ID=
           .upload(file, fileBuffer, {
             cacheControl: "3600",
             upsert: true,
+            contentType,
           });
 
         if (uploadError) {
