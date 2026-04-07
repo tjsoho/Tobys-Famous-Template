@@ -6,7 +6,7 @@ const supabase = createClient();
 
 // Constants
 const BUCKET_NAME = "site-images";
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const MAX_FILE_SIZE = 500 * 1024; // 500KB
 
 /**
  * Get all images from the storage bucket
@@ -123,7 +123,7 @@ export async function uploadImage(file: File): Promise<UploadResult> {
 		console.log("User authenticated successfully:", session.user?.email);
 
 		if (file.size > MAX_FILE_SIZE) {
-			return { url: "", error: new Error("File size must be less than 5MB") };
+			return { url: "", error: new Error("File size must be less than 500KB") };
 		}
 
 		const timestamp = new Date().getTime();

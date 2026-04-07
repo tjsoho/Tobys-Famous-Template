@@ -35,7 +35,7 @@ $$ LANGUAGE plpgsql;
 -- 2. Click "New Bucket"
 -- 3. Name: "site-images"
 -- 4. Public bucket: ✅ (checked)
--- 5. File size limit: 50MB (or your preferred limit)
+-- 5. File size limit: 500KB (512000 bytes)
 --
 -- ============================================================================
 
