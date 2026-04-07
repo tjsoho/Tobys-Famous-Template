@@ -7,10 +7,10 @@
  *
  * What it does:
  * 1. Runs npm install (so dependencies are available)
- * 2. Prompts for Supabase URL, anon key, and service role key
+ * 2. Prompts for Supabase URL, anon key, service role key, and DB password
  * 3. Prompts for admin email + password
  * 4. Writes .env.local
- * 5. Guides you to run setup-database.sql in Supabase dashboard
+ * 5. Runs all SQL from setup-database.sql directly against Postgres
  * 6. Creates the site-images storage bucket (public, 500KB limit)
  * 7. Creates the admin auth user
  * 8. Optionally syncs images from public/images
@@ -84,8 +84,10 @@ async function main() {
     }
   }
 
-  // Now dynamically import Supabase (available after npm install)
+  // Now dynamically import dependencies (available after npm install)
   const { createClient } = await import("@supabase/supabase-js");
+  const pg = await import("pg");
+  const { Client } = pg.default || pg;
 
   // ──────────────────────────────────────────────
   // STEP 2: Collect credentials
@@ -107,6 +109,17 @@ async function main() {
   // Validate URL format
   if (!supabaseUrl.includes("supabase.co")) {
     console.error("\n❌ Invalid Supabase URL. Should look like: https://xxxxx.supabase.co");
+    rl.close();
+    process.exit(1);
+  }
+
+  const projectRef = supabaseUrl.replace("https://", "").replace(".supabase.co", "");
+
+  console.log("\nGet this from: Supabase Dashboard > Project Settings > Database\n");
+  const dbPassword = await ask("  Database Password: ");
+
+  if (!dbPassword) {
+    console.error("\n❌ Database password is required for SQL setup.");
     rl.close();
     process.exit(1);
   }
@@ -146,23 +159,85 @@ NEXT_PUBLIC_HOTJAR_ID=
   // ──────────────────────────────────────────────
   // STEP 4: Run database SQL
   // ──────────────────────────────────────────────
-  logStep(4, TOTAL_STEPS, "Database setup");
+  logStep(4, TOTAL_STEPS, "Creating database tables");
 
-  const projectRef = supabaseUrl.replace("https://", "").replace(".supabase.co", "");
+  const sqlPath = path.join(ROOT_DIR, "setup-database.sql");
+  const fullSql = fs.readFileSync(sqlPath, "utf-8");
 
-  log("📋", "Please run the SQL in the Supabase dashboard:");
-  console.log("");
-  console.log("   1. Go to: https://supabase.com/dashboard/project/" + projectRef + "/sql/new");
-  console.log("   2. Copy and paste the contents of setup-database.sql");
-  console.log("   3. Click 'Run'");
-  console.log("");
+  log("⏳", "Connecting to database...");
 
-  const runManually = await ask("  Have you run the SQL? (y to continue): ");
-  if (runManually.toLowerCase() === "y") {
-    log("✅", "Database tables created");
-  } else {
-    log("⚠️", "You can run the SQL later. The .env.local has been created.");
-    log("ℹ️", "The app will work once the tables exist.");
+  // Connect directly to Postgres using the Supabase connection string
+  const dbClient = new Client({
+    connectionString: `postgresql://postgres.${projectRef}:${dbPassword}@aws-0-ap-southeast-2.pooler.supabase.com:6543/postgres`,
+    ssl: { rejectUnauthorized: false },
+  });
+
+  try {
+    await dbClient.connect();
+    log("✅", "Connected to database");
+
+    log("⏳", "Running SQL...");
+    await dbClient.query(fullSql);
+    log("✅", "All database tables created successfully");
+  } catch (dbError) {
+    log("❌", `Database error: ${dbError.message}`);
+
+    // If connection failed, might be wrong region — try common regions
+    if (dbError.message.includes("connect") || dbError.message.includes("ENOTFOUND")) {
+      log("⚠️", "Connection failed. Trying alternative regions...");
+
+      const regions = [
+        "us-east-1",
+        "us-west-1",
+        "eu-west-1",
+        "eu-central-1",
+        "ap-southeast-1",
+        "ap-northeast-1",
+      ];
+
+      let connected = false;
+      for (const region of regions) {
+        try {
+          const altClient = new Client({
+            connectionString: `postgresql://postgres.${projectRef}:${dbPassword}@aws-0-${region}.pooler.supabase.com:6543/postgres`,
+            ssl: { rejectUnauthorized: false },
+          });
+          await altClient.connect();
+          log("✅", `Connected via ${region}`);
+          await altClient.query(fullSql);
+          log("✅", "All database tables created successfully");
+          await altClient.end();
+          connected = true;
+          break;
+        } catch {
+          // Try next region
+        }
+      }
+
+      if (!connected) {
+        log("⚠️", "Could not connect automatically. Please run the SQL manually:");
+        console.log("");
+        console.log("   1. Go to: https://supabase.com/dashboard/project/" + projectRef + "/sql/new");
+        console.log("   2. Copy and paste the contents of setup-database.sql");
+        console.log("   3. Click 'Run'");
+        console.log("");
+        await ask("  Press Enter when done...");
+      }
+    } else {
+      log("⚠️", "SQL execution failed. Please run the SQL manually:");
+      console.log("");
+      console.log("   1. Go to: https://supabase.com/dashboard/project/" + projectRef + "/sql/new");
+      console.log("   2. Copy and paste the contents of setup-database.sql");
+      console.log("   3. Click 'Run'");
+      console.log("");
+      await ask("  Press Enter when done...");
+    }
+  } finally {
+    try {
+      await dbClient.end();
+    } catch {
+      // Already closed
+    }
   }
 
   // ──────────────────────────────────────────────
