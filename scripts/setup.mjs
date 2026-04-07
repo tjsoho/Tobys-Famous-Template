@@ -275,24 +275,43 @@ NEXT_PUBLIC_HOTJAR_ID=
   // ──────────────────────────────────────────────
   // STEP 6: Create admin user
   // ──────────────────────────────────────────────
-  logStep(6, TOTAL_STEPS, "Creating admin user");
+  logStep(6, TOTAL_STEPS, "Creating admin users");
 
-  const { data: userData, error: userError } =
-    await supabase.auth.admin.createUser({
-      email: adminEmail,
-      password: adminPassword,
+  // Create the first admin user (from credentials collected earlier)
+  async function createAdminUser(email, password) {
+    const { data, error } = await supabase.auth.admin.createUser({
+      email,
+      password,
       email_confirm: true,
     });
 
-  if (userError) {
-    if (userError.message.includes("already been registered")) {
-      log("✅", `Admin user ${adminEmail} already exists`);
+    if (error) {
+      if (error.message.includes("already been registered")) {
+        log("✅", `${email} already exists`);
+      } else {
+        log("❌", `Failed to create ${email}: ${error.message}`);
+      }
     } else {
-      log("❌", `Failed to create admin user: ${userError.message}`);
-      log("📋", "Create manually: Supabase Dashboard > Authentication > Users > Add User");
+      log("✅", `Admin user created: ${email}`);
     }
-  } else {
-    log("✅", `Admin user created: ${adminEmail}`);
+  }
+
+  await createAdminUser(adminEmail, adminPassword);
+
+  // Loop to add more admin users
+  while (true) {
+    const addAnother = await ask("\n  Add another admin user? (y/n): ");
+    if (addAnother.toLowerCase() !== "y") break;
+
+    const extraEmail = await ask("  Email: ");
+    const extraPassword = await ask("  Password (min 6 chars): ");
+
+    if (!extraEmail || !extraPassword || extraPassword.length < 6) {
+      log("⚠️", "Invalid email or password (6+ chars required) — skipping");
+      continue;
+    }
+
+    await createAdminUser(extraEmail, extraPassword);
   }
 
   // ──────────────────────────────────────────────
