@@ -3,6 +3,7 @@
 import { useForm } from "react-hook-form";
 import { createClient } from "@supabase/supabase-js";
 import { useState, } from "react";
+import Image from "next/image";
 import { createSlug } from "@/utils/create-slug";
 import { BlogFormData, BlogPost } from "@/app/types/blog";
 import { useImageLibrary } from "@/contexts/ImageLibraryContext";
@@ -200,10 +201,13 @@ export default function BlogForm({ initialData, onCancel }: BlogFormProps) {
                                 <div className="mt-1">
                                     {selectedImage ? (
                                         <div className="relative group rounded-lg overflow-hidden border-2 border-brand-yellow">
-                                            <img
+                                            <Image
                                                 src={selectedImage}
                                                 alt="Blog cover"
+                                                width={800}
+                                                height={128}
                                                 className="w-full h-32 object-cover"
+                                                unoptimized
                                             />
                                             <div className="absolute inset-0 bg-brand-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                                 <button

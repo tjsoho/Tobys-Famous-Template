@@ -22,6 +22,7 @@ import {
     faCircleQuestion,
     faMagnifyingGlass,
     faImage,
+    faChartBar,
 } from "@fortawesome/free-solid-svg-icons";
 
 /* ************************************************************
@@ -134,6 +135,13 @@ const AdminTiles = () => {
             title: "Site Logo",
             description: "Manage site logo for header and admin",
             color: "bg-brand-teal text-white"
+        },
+        {
+            href: "/admin/analytics",
+            icon: <FontAwesomeIcon icon={faChartBar} />,
+            title: "Analytics",
+            description: "View site analytics and traffic data",
+            color: "bg-green-600 text-white"
         },
     ];
 

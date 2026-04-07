@@ -325,47 +325,7 @@ ALTER TABLE public.faq_categories DISABLE ROW LEVEL SECURITY;
 ALTER TABLE public.faqs DISABLE ROW LEVEL SECURITY;
 
 -- ============================================================================
--- 9. TEAM TABLE
--- ============================================================================
-
-CREATE TABLE IF NOT EXISTS public.team (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    title TEXT NOT NULL,
-    excerpt TEXT,
-    content TEXT,
-    cover_image TEXT,
-    slug TEXT NOT NULL UNIQUE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
-);
-
--- Create index on slug for faster lookups
-CREATE INDEX IF NOT EXISTS idx_team_slug ON public.team(slug);
-
--- Enable RLS
-ALTER TABLE public.team ENABLE ROW LEVEL SECURITY;
-
--- Create policies for team
-CREATE POLICY "Enable read access for all users" ON public.team
-    FOR SELECT USING (true);
-
-CREATE POLICY "Enable insert for authenticated users only" ON public.team
-    FOR INSERT WITH CHECK (auth.role() = 'authenticated');
-
-CREATE POLICY "Enable update for authenticated users only" ON public.team
-    FOR UPDATE USING (auth.role() = 'authenticated') WITH CHECK (auth.role() = 'authenticated');
-
-CREATE POLICY "Enable delete for authenticated users only" ON public.team
-    FOR DELETE USING (auth.role() = 'authenticated');
-
--- Create trigger to auto-update updated_at
-CREATE TRIGGER update_team_updated_at
-    BEFORE UPDATE ON public.team
-    FOR EACH ROW
-    EXECUTE FUNCTION trigger_set_timestamp();
-
--- ============================================================================
--- 10. PRIVACY POLICY TABLE
+-- 9. PRIVACY POLICY TABLE
 -- ============================================================================
 
 CREATE TABLE IF NOT EXISTS public.privacy_policy (
@@ -455,6 +415,41 @@ CREATE TRIGGER update_terms_of_use_updated_at
     EXECUTE FUNCTION trigger_set_timestamp();
 
 -- ============================================================================
+-- 13. ANALYTICS TABLE
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS public.analytics (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    path TEXT NOT NULL,
+    user_agent TEXT,
+    referrer TEXT,
+    session_id TEXT,
+    device_type TEXT,
+    browser TEXT,
+    city TEXT,
+    state TEXT,
+    country TEXT,
+    ip TEXT,
+    source TEXT,
+    visitor_id TEXT,
+    is_returning BOOLEAN DEFAULT false,
+    first_visit TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- Create indexes for analytics queries
+CREATE INDEX IF NOT EXISTS idx_analytics_created_at ON public.analytics(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_analytics_path ON public.analytics(path);
+CREATE INDEX IF NOT EXISTS idx_analytics_session_id ON public.analytics(session_id);
+CREATE INDEX IF NOT EXISTS idx_analytics_visitor_id ON public.analytics(visitor_id);
+
+-- Disable RLS - analytics inserts come from the API route, not authenticated users
+ALTER TABLE public.analytics DISABLE ROW LEVEL SECURITY;
+
+-- Add comment
+COMMENT ON TABLE public.analytics IS 'Stores page view analytics data including device, browser, location, and traffic source information.';
+
+-- ============================================================================
 -- COMPLETION MESSAGE
 -- ============================================================================
 
@@ -469,10 +464,10 @@ BEGIN
     RAISE NOTICE '  - seo_metadata (page-level SEO)';
     RAISE NOTICE '  - faq_categories (FAQ categories)';
     RAISE NOTICE '  - faqs (FAQ entries)';
-    RAISE NOTICE '  - team (team members)';
     RAISE NOTICE '  - privacy_policy (privacy policy content)';
     RAISE NOTICE '  - terms_and_conditions (terms and conditions content)';
     RAISE NOTICE '  - terms_of_use (terms of use content)';
+    RAISE NOTICE '  - analytics (page view tracking and traffic data)';
     RAISE NOTICE '';
     RAISE NOTICE 'Storage policies created for "site-images" bucket:';
     RAISE NOTICE '  ✓ Public read access';

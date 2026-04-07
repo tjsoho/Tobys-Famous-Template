@@ -3,6 +3,9 @@ import "./globals.css";
 import HeaderWrapper from "@/components/core/HeaderWrapper";
 import FooterWrapper from "@/components/core/FooterWrapper";
 import { Toaster } from "react-hot-toast";
+import { Suspense } from "react";
+import Analytics from "@/components/Analytics";
+import Hotjar from "@/components/Hotjar";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -15,6 +18,9 @@ const geistMono = Geist_Mono({
 });
 
 // Metadata is now generated dynamically per page via generateMetadata()
+
+// Force dynamic rendering since Analytics component uses useSearchParams
+export const dynamic = "force-dynamic";
 
 export default function RootLayout({
 	children,
@@ -47,6 +53,13 @@ export default function RootLayout({
 						},
 					}}
 				/>
+				<Suspense fallback={null}>
+					<Analytics
+						enabled={process.env.NODE_ENV === "production"}
+						debounce={300}
+					/>
+				</Suspense>
+				<Hotjar />
 				<HeaderWrapper />
 				<main className="">{children}</main>
 				<FooterWrapper />
