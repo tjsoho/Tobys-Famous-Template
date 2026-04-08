@@ -166,78 +166,45 @@ NEXT_PUBLIC_HOTJAR_ID=
 
   log("⏳", "Connecting to database...");
 
-  // Connect directly to Postgres using the Supabase connection string
-  const dbClient = new Client({
-    connectionString: `postgresql://postgres.${projectRef}:${dbPassword}@aws-0-ap-southeast-2.pooler.supabase.com:6543/postgres`,
-    ssl: { rejectUnauthorized: false },
-  });
+  // Try all known Supabase pooler regions until one works
+  const regions = [
+    "ap-southeast-2", "us-east-1", "us-east-2", "us-west-1", "us-west-2",
+    "eu-west-1", "eu-west-2", "eu-west-3", "eu-central-1", "eu-central-2",
+    "ap-southeast-1", "ap-northeast-1", "ap-northeast-2", "ap-south-1",
+    "sa-east-1", "ca-central-1", "me-south-1", "af-south-1",
+  ];
 
-  try {
-    await dbClient.connect();
-    log("✅", "Connected to database");
+  let sqlSuccess = false;
 
-    log("⏳", "Running SQL...");
-    await dbClient.query(fullSql);
-    log("✅", "All database tables created successfully");
-  } catch (dbError) {
-    log("❌", `Database error: ${dbError.message}`);
+  for (const region of regions) {
+    const dbClient = new Client({
+      connectionString: `postgresql://postgres.${projectRef}:${dbPassword}@aws-0-${region}.pooler.supabase.com:6543/postgres`,
+      ssl: { rejectUnauthorized: false },
+      connectionTimeoutMillis: 5000,
+    });
 
-    // If connection failed, might be wrong region — try common regions
-    if (dbError.message.includes("connect") || dbError.message.includes("ENOTFOUND")) {
-      log("⚠️", "Connection failed. Trying alternative regions...");
-
-      const regions = [
-        "us-east-1",
-        "us-west-1",
-        "eu-west-1",
-        "eu-central-1",
-        "ap-southeast-1",
-        "ap-northeast-1",
-      ];
-
-      let connected = false;
-      for (const region of regions) {
-        try {
-          const altClient = new Client({
-            connectionString: `postgresql://postgres.${projectRef}:${dbPassword}@aws-0-${region}.pooler.supabase.com:6543/postgres`,
-            ssl: { rejectUnauthorized: false },
-          });
-          await altClient.connect();
-          log("✅", `Connected via ${region}`);
-          await altClient.query(fullSql);
-          log("✅", "All database tables created successfully");
-          await altClient.end();
-          connected = true;
-          break;
-        } catch {
-          // Try next region
-        }
-      }
-
-      if (!connected) {
-        log("⚠️", "Could not connect automatically. Please run the SQL manually:");
-        console.log("");
-        console.log("   1. Go to: https://supabase.com/dashboard/project/" + projectRef + "/sql/new");
-        console.log("   2. Copy and paste the contents of setup-database.sql");
-        console.log("   3. Click 'Run'");
-        console.log("");
-        await ask("  Press Enter when done...");
-      }
-    } else {
-      log("⚠️", "SQL execution failed. Please run the SQL manually:");
-      console.log("");
-      console.log("   1. Go to: https://supabase.com/dashboard/project/" + projectRef + "/sql/new");
-      console.log("   2. Copy and paste the contents of setup-database.sql");
-      console.log("   3. Click 'Run'");
-      console.log("");
-      await ask("  Press Enter when done...");
-    }
-  } finally {
     try {
+      await dbClient.connect();
+      log("✅", `Connected to database (${region})`);
+      log("⏳", "Running SQL...");
+      await dbClient.query(fullSql);
+      log("✅", "All database tables created successfully");
       await dbClient.end();
+      sqlSuccess = true;
+      break;
     } catch {
-      // Already closed
+      try { await dbClient.end(); } catch { /* ignore */ }
     }
+  }
+
+  if (!sqlSuccess) {
+    log("⚠️", "Could not connect automatically. Please run the SQL manually:");
+    console.log("");
+    console.log("   1. Go to: https://supabase.com/dashboard/project/" + projectRef + "/sql/new");
+    console.log("   2. Copy and paste the contents of setup-database.sql");
+    console.log("   3. Click 'Run'");
+    console.log("");
+    await ask("  Press Enter when done...");
   }
 
   // ──────────────────────────────────────────────
