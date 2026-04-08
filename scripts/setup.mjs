@@ -166,33 +166,40 @@ NEXT_PUBLIC_HOTJAR_ID=
 
   log("⏳", "Connecting to database...");
 
-  // Try all known Supabase pooler regions until one works
-  const regions = [
-    "ap-southeast-2", "us-east-1", "us-east-2", "us-west-1", "us-west-2",
-    "eu-west-1", "eu-west-2", "eu-west-3", "eu-central-1", "eu-central-2",
-    "ap-southeast-1", "ap-northeast-1", "ap-northeast-2", "ap-south-1",
-    "sa-east-1", "ca-central-1", "me-south-1", "af-south-1",
+  // Encode password for URL (handles special characters)
+  const encodedPassword = encodeURIComponent(dbPassword);
+
+  // Try direct connection first (no region needed), then pooler with all regions
+  const connectionStrings = [
+    // Direct connection
+    { label: "direct", url: `postgresql://postgres:${encodedPassword}@db.${projectRef}.supabase.co:5432/postgres` },
+    // Pooler connections (all known regions)
+    ...["ap-southeast-2", "us-east-1", "us-east-2", "us-west-1", "us-west-2",
+      "eu-west-1", "eu-west-2", "eu-west-3", "eu-central-1", "eu-central-2",
+      "ap-southeast-1", "ap-northeast-1", "ap-northeast-2", "ap-south-1",
+      "sa-east-1", "ca-central-1", "me-south-1", "af-south-1",
+    ].map(r => ({ label: `pooler/${r}`, url: `postgresql://postgres.${projectRef}:${encodedPassword}@aws-0-${r}.pooler.supabase.com:6543/postgres` })),
   ];
 
   let sqlSuccess = false;
 
-  for (const region of regions) {
+  for (const conn of connectionStrings) {
     const dbClient = new Client({
-      connectionString: `postgresql://postgres.${projectRef}:${dbPassword}@aws-0-${region}.pooler.supabase.com:6543/postgres`,
+      connectionString: conn.url,
       ssl: { rejectUnauthorized: false },
       connectionTimeoutMillis: 5000,
     });
 
     try {
       await dbClient.connect();
-      log("✅", `Connected to database (${region})`);
+      log("✅", `Connected to database (${conn.label})`);
       log("⏳", "Running SQL...");
       await dbClient.query(fullSql);
       log("✅", "All database tables created successfully");
       await dbClient.end();
       sqlSuccess = true;
       break;
-    } catch {
+    } catch (err) {
       try { await dbClient.end(); } catch { /* ignore */ }
     }
   }
