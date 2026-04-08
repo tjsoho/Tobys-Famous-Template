@@ -31,7 +31,7 @@ const AccordionTrigger = React.forwardRef<
   const [isOpen, setIsOpen] = React.useState(false);
 
   return (
-    <AccordionPrimitive.Header className="flex">
+    <AccordionPrimitive.Header className="flex items-center gap-2">
       <AccordionPrimitive.Trigger
         ref={ref}
         className={cn(
@@ -42,30 +42,28 @@ const AccordionTrigger = React.forwardRef<
         {...props}
       >
         {children}
-        <div className="flex items-center gap-2">
-          {editIcon}
-          <div className="relative group">
-            <Plus
-              size={20}
-              strokeWidth={2.5}
-              className={cn(
-                "shrink-0 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:rotate-90 text-brand-yellow rounded-full border border-brand-yellow p-2 w-8 h-8",
-                isOpen ? "opacity-0 rotate-90" : "opacity-100 rotate-0"
-              )}
-              aria-hidden="true"
-            />
-            <Minus
-              size={20}
-              strokeWidth={2.5}
-              className={cn(
-                "shrink-0 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] absolute top-0 left-0 group-hover:rotate-90 text-brand-yellow rounded-full border border-brand-yellow p-2 w-8 h-8",
-                isOpen ? "opacity-100 rotate-0" : "opacity-0 rotate-90"
-              )}
-              aria-hidden="true"
-            />
-          </div>
+        <div className="relative group">
+          <Plus
+            size={20}
+            strokeWidth={2.5}
+            className={cn(
+              "shrink-0 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:rotate-90 text-brand-yellow rounded-full border border-brand-yellow p-2 w-8 h-8",
+              isOpen ? "opacity-0 rotate-90" : "opacity-100 rotate-0"
+            )}
+            aria-hidden="true"
+          />
+          <Minus
+            size={20}
+            strokeWidth={2.5}
+            className={cn(
+              "shrink-0 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] absolute top-0 left-0 group-hover:rotate-90 text-brand-yellow rounded-full border border-brand-yellow p-2 w-8 h-8",
+              isOpen ? "opacity-100 rotate-0" : "opacity-0 rotate-90"
+            )}
+            aria-hidden="true"
+          />
         </div>
       </AccordionPrimitive.Trigger>
+      {editIcon}
     </AccordionPrimitive.Header>
   );
 });
