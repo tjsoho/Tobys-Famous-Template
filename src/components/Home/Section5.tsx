@@ -3,7 +3,7 @@
 import { HomePageProps } from "@/app/_config";
 import { motion, useInView } from "framer-motion";
 import React from "react";
-import Image from "next/image";
+import FocalImage from "@/components/core/focal-image";
 import { BWestSmallButton } from "../ui/b-west-small";
 import { RenderLineBreaks } from "@/utils/render-line-breaks";
 
@@ -138,7 +138,7 @@ export default function Section5({ content }: Section5Props) {
 					className="flex-1 relative h-64 sm:h-80 md:h-96 lg:h-full order-2 w-full flex justify-center items-center"
 				>
 					<div className="relative w-[500px] h-[300px] lg:w-full lg:h-full">
-						<Image
+						<FocalImage
 							src={content.section5image}
 							alt={content.section5title || "Novated leasing promotional content"}
 							fill

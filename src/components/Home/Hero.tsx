@@ -3,7 +3,7 @@
 import { HomePageProps } from "@/app/_config";
 import { motion, useInView } from "framer-motion";
 import React from "react";
-import Image from "next/image";
+import FocalImage from "@/components/core/focal-image";
 import { BWestButton } from "@/components/ui/b-west-button";
 import { RenderLineBreaks } from "@/utils/render-line-breaks";
 
@@ -125,7 +125,7 @@ export default function Hero({ content }: HeroProps) {
                     variants={imageVariants}
                     className="flex-1 relative h-64 sm:h-80 md:h-96 lg:h-full order-2 w-full flex justify-center items-center rounded-2xl"
                 >
-                    <Image
+                    <FocalImage
                         src={content.heroImage}
                         alt={content.heroTitle || "Novated leasing made easy - Bright Leasing"}
                         width={800}

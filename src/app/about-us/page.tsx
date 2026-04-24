@@ -3,7 +3,7 @@
 import getPage from "@/server-actions/page";
 import { aboutUsPageFallbackData, AboutUsPageProps } from "./_config";
 import AboutTabs, { AboutTabItem } from "@/components/about/AboutTabs";
-import Image from "next/image";
+import FocalImage from "@/components/core/focal-image";
 // import LuxeButton from "@/ui/LuxeButton";
 import DynamicYoutubeVideo from "@/components/about/DynamicYoutubeVideo";
 import { motion, useInView, easeOut } from "framer-motion";
@@ -179,7 +179,7 @@ export default function About() {
 								initial="hidden"
 								animate={isSection1InView ? "show" : "hidden"}
 							>
-								<Image
+								<FocalImage
 									src={aboutPage.content.heroImage || "/placeholder.jpg"}
 									alt="Mission image"
 									width={1920}
