@@ -10,12 +10,13 @@ type FocalImageProps = Omit<ImageProps, "src"> & {
  * point from the URL and applies it as object-position. Pair with
  * object-cover on className (or a fill container) to actually see the crop.
  */
-export default function FocalImage({ src, style, ...rest }: FocalImageProps) {
+export default function FocalImage({ src, alt, style, ...rest }: FocalImageProps) {
     const { cleanUrl, focus } = parseImageUrl(src || "");
     const finalSrc = cleanUrl || "/placeholder.jpg";
     return (
         <Image
             {...rest}
+            alt={alt}
             src={finalSrc}
             style={{ objectPosition: `${focus.x}% ${focus.y}%`, ...style }}
         />

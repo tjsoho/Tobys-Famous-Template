@@ -12,7 +12,6 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { Mail, Send, CheckCircle, AlertCircle } from "lucide-react";
-import Image from "next/image";
 import FocalImage from "@/components/core/focal-image";
 
 /* ************************************************************
