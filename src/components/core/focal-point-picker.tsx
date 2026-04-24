@@ -43,14 +43,14 @@ export default function FocalPointPicker({
 
     return (
         <div className="fixed inset-0 bg-black/80 z-[60] flex items-center justify-center p-4">
-            <div className="bg-neutral-900 w-full max-w-3xl rounded-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="bg-neutral-900 w-full max-w-5xl rounded-2xl overflow-hidden flex flex-col max-h-[90vh]">
                 <div className="px-6 py-4 border-b border-white/10 flex justify-between items-center">
                     <div className="flex items-center gap-3">
                         <Crosshair className="w-5 h-5 text-brand-yellow" />
                         <div>
                             <h2 className="text-lg text-white font-semibold">Set focal point</h2>
                             <p className="text-white/50 text-xs">
-                                Click or drag — this point stays centered in every crop
+                                Click or drag on the left — preview on the right
                             </p>
                         </div>
                     </div>
@@ -59,55 +59,58 @@ export default function FocalPointPicker({
                     </button>
                 </div>
 
-                <div className="p-6 flex-1 overflow-auto space-y-4">
-                    <div
-                        ref={imgWrapRef}
-                        className="relative select-none cursor-crosshair rounded-xl overflow-hidden bg-black"
-                        onMouseDown={(e) => {
-                            setIsDragging(true);
-                            updateFocus(e.clientX, e.clientY);
-                        }}
-                        onMouseMove={(e) => isDragging && updateFocus(e.clientX, e.clientY)}
-                        onMouseUp={() => setIsDragging(false)}
-                        onMouseLeave={() => setIsDragging(false)}
-                        onTouchStart={(e) => {
-                            const t = e.touches[0];
-                            updateFocus(t.clientX, t.clientY);
-                        }}
-                        onTouchMove={(e) => {
-                            const t = e.touches[0];
-                            updateFocus(t.clientX, t.clientY);
-                        }}
-                    >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                            src={imageUrl}
-                            alt=""
-                            className="w-full h-auto pointer-events-none max-h-[50vh] object-contain mx-auto"
-                        />
-
+                <div className="p-6 flex-1 overflow-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="flex flex-col gap-2 min-w-0">
+                        <p className="text-white/50 text-xs">Source image</p>
                         <div
-                            className="absolute pointer-events-none"
-                            style={{
-                                left: `${focus.x}%`,
-                                top: `${focus.y}%`,
-                                transform: "translate(-50%, -50%)",
+                            ref={imgWrapRef}
+                            className="relative select-none cursor-crosshair rounded-xl overflow-hidden bg-black flex items-center justify-center"
+                            onMouseDown={(e) => {
+                                setIsDragging(true);
+                                updateFocus(e.clientX, e.clientY);
+                            }}
+                            onMouseMove={(e) => isDragging && updateFocus(e.clientX, e.clientY)}
+                            onMouseUp={() => setIsDragging(false)}
+                            onMouseLeave={() => setIsDragging(false)}
+                            onTouchStart={(e) => {
+                                const t = e.touches[0];
+                                updateFocus(t.clientX, t.clientY);
+                            }}
+                            onTouchMove={(e) => {
+                                const t = e.touches[0];
+                                updateFocus(t.clientX, t.clientY);
                             }}
                         >
-                            <div className="w-10 h-10 rounded-full border-2 border-white bg-brand-yellow/40 backdrop-blur-sm flex items-center justify-center">
-                                <div className="w-2 h-2 rounded-full bg-white" />
-                            </div>
-                            <div className="absolute top-1/2 left-1/2 w-16 h-px bg-white/50 -translate-x-1/2 -translate-y-1/2" />
-                            <div className="absolute top-1/2 left-1/2 w-px h-16 bg-white/50 -translate-x-1/2 -translate-y-1/2" />
-                        </div>
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                                src={imageUrl}
+                                alt=""
+                                className="w-full h-auto pointer-events-none max-h-[60vh] object-contain"
+                            />
 
-                        <div className="absolute bottom-3 left-3 bg-black/70 rounded-full px-3 py-1 text-white text-xs font-mono">
-                            {focus.x}% × {focus.y}%
+                            <div
+                                className="absolute pointer-events-none"
+                                style={{
+                                    left: `${focus.x}%`,
+                                    top: `${focus.y}%`,
+                                    transform: "translate(-50%, -50%)",
+                                }}
+                            >
+                                <div className="w-10 h-10 rounded-full border-2 border-white bg-brand-yellow/40 backdrop-blur-sm flex items-center justify-center">
+                                    <div className="w-2 h-2 rounded-full bg-white" />
+                                </div>
+                                <div className="absolute top-1/2 left-1/2 w-16 h-px bg-white/50 -translate-x-1/2 -translate-y-1/2" />
+                                <div className="absolute top-1/2 left-1/2 w-px h-16 bg-white/50 -translate-x-1/2 -translate-y-1/2" />
+                            </div>
+
+                            <div className="absolute bottom-3 left-3 bg-black/70 rounded-full px-3 py-1 text-white text-xs font-mono">
+                                {focus.x}% × {focus.y}%
+                            </div>
                         </div>
                     </div>
 
-                    <div>
-                        <p className="text-white/50 text-xs mb-2">Crop preview (approx. public display)</p>
+                    <div className="flex flex-col gap-2 min-w-0">
+                        <p className="text-white/50 text-xs">Crop preview (approx. public display)</p>
                         <div
                             className="w-full rounded-xl overflow-hidden bg-black"
                             style={{ aspectRatio: previewAspect }}
