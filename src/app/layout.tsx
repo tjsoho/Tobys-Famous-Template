@@ -19,9 +19,6 @@ const geistMono = Geist_Mono({
 
 // Metadata is now generated dynamically per page via generateMetadata()
 
-// Force dynamic rendering since Analytics component uses useSearchParams
-export const dynamic = "force-dynamic";
-
 export default function RootLayout({
 	children,
 }: Readonly<{

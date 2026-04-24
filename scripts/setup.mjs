@@ -150,6 +150,11 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=${anonKey}
 # Hotjar - Get your Site ID from https://www.hotjar.com (free tier)
 # Leave empty to disable Hotjar tracking
 NEXT_PUBLIC_HOTJAR_ID=
+
+# Stock photos in media library (optional — tab is hidden if both are blank)
+# Pexels: https://www.pexels.com/api/  |  Unsplash: https://unsplash.com/developers
+PEXELS_API_KEY=
+UNSPLASH_ACCESS_KEY=
 `;
 
   const envPath = path.join(ROOT_DIR, ".env.local");
@@ -227,7 +232,7 @@ NEXT_PUBLIC_HOTJAR_ID=
   } else {
     const { error: bucketError } = await supabase.storage.createBucket("site-images", {
       public: true,
-      fileSizeLimit: 512000, // 500KB in bytes
+      fileSizeLimit: 5242880, // 5MB — headroom for compressed WebP + pass-through GIFs
       allowedMimeTypes: [
         "image/jpeg",
         "image/png",
@@ -240,9 +245,9 @@ NEXT_PUBLIC_HOTJAR_ID=
     if (bucketError) {
       log("❌", `Failed to create bucket: ${bucketError.message}`);
       log("📋", "Create it manually: Supabase Dashboard > Storage > New Bucket");
-      log("   ", "Name: site-images | Public: Yes | Size limit: 500KB");
+      log("   ", "Name: site-images | Public: Yes | Size limit: 5MB");
     } else {
-      log("✅", "site-images bucket created (public, 500KB limit, images only)");
+      log("✅", "site-images bucket created (public, 5MB limit, images only)");
     }
   }
 
@@ -327,8 +332,8 @@ NEXT_PUBLIC_HOTJAR_ID=
         const ext = path.extname(file).toLowerCase();
         const contentType = mimeTypes[ext] || "image/png";
 
-        if (stats.size > 512000) {
-          log("⚠️", `Skipping ${file} (${(stats.size / 1024).toFixed(0)}KB > 500KB limit)`);
+        if (stats.size > 5242880) {
+          log("⚠️", `Skipping ${file} (${(stats.size / 1024).toFixed(0)}KB > 5MB limit)`);
           continue;
         }
 

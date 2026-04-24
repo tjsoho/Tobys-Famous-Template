@@ -10,9 +10,7 @@ import Section6 from "@/components/Home/Section6";
 import Section7 from "@/components/Home/Section7";
 import { buildPageMetadata } from "@/utils/seo";
 
-// Disable caching for this page to ensure fresh content
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 60;
 
 export async function generateMetadata(): Promise<Metadata> {
   return buildPageMetadata("home");

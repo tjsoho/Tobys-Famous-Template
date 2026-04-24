@@ -8,6 +8,8 @@ import Image from "next/image";
 import MobileBlogHero from "@/components/blog/MobileBlogHero";
 import { buildPostMetadata } from "@/utils/seo";
 
+export const revalidate = 60;
+
 export default async function Post(props: Params) {
 	const params = await props.params;
 	const post = await getPostBySlug(params.slug);
