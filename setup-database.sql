@@ -450,6 +450,85 @@ ALTER TABLE public.analytics DISABLE ROW LEVEL SECURITY;
 COMMENT ON TABLE public.analytics IS 'Stores page view analytics data including device, browser, location, and traffic source information.';
 
 -- ============================================================================
+-- 14. SITE INTEGRATIONS TABLE (singleton)
+-- ============================================================================
+-- One-row table holding tracking pixel / tag IDs (GA4, GTM, Meta Pixel, Hotjar).
+-- The public site reads this at render time so admins can flip pixels on/off
+-- without a redeploy.
+
+CREATE TABLE IF NOT EXISTS public.site_integrations (
+    id TEXT PRIMARY KEY DEFAULT 'site-integrations-1',
+    ga4_measurement_id TEXT,
+    ga4_enabled BOOLEAN NOT NULL DEFAULT true,
+    gtm_container_id TEXT,
+    gtm_enabled BOOLEAN NOT NULL DEFAULT true,
+    meta_pixel_id TEXT,
+    meta_pixel_enabled BOOLEAN NOT NULL DEFAULT true,
+    hotjar_site_id TEXT,
+    hotjar_enabled BOOLEAN NOT NULL DEFAULT true,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    CONSTRAINT site_integrations_singleton CHECK (id = 'site-integrations-1')
+);
+
+INSERT INTO public.site_integrations (id) VALUES ('site-integrations-1')
+ON CONFLICT (id) DO NOTHING;
+
+ALTER TABLE public.site_integrations ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Public can read site integrations" ON public.site_integrations;
+DROP POLICY IF EXISTS "Authenticated users can update site integrations" ON public.site_integrations;
+DROP POLICY IF EXISTS "Authenticated users can insert site integrations" ON public.site_integrations;
+CREATE POLICY "Public can read site integrations" ON public.site_integrations FOR SELECT USING (true);
+CREATE POLICY "Authenticated users can update site integrations" ON public.site_integrations
+    FOR UPDATE USING (auth.role() = 'authenticated') WITH CHECK (auth.role() = 'authenticated');
+CREATE POLICY "Authenticated users can insert site integrations" ON public.site_integrations
+    FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+
+DROP TRIGGER IF EXISTS update_site_integrations_updated_at ON public.site_integrations;
+CREATE TRIGGER update_site_integrations_updated_at
+    BEFORE UPDATE ON public.site_integrations
+    FOR EACH ROW EXECUTE FUNCTION trigger_set_timestamp();
+
+COMMENT ON TABLE public.site_integrations IS 'Singleton: tracking pixel / tag IDs surfaced via /admin/integrations.';
+
+-- ============================================================================
+-- 15. SITE SETTINGS TABLE (singleton)
+-- ============================================================================
+-- Global site toggles. Currently houses the hold-page (coming-soon) feature
+-- but designed to grow with future flags.
+
+CREATE TABLE IF NOT EXISTS public.site_settings (
+    id TEXT PRIMARY KEY DEFAULT 'site-settings-1',
+    holdpage_enabled BOOLEAN NOT NULL DEFAULT false,
+    holdpage_title TEXT NOT NULL DEFAULT 'Coming Soon',
+    holdpage_subtitle TEXT NOT NULL DEFAULT 'Website Launching Very Soon',
+    holdpage_image_url TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    CONSTRAINT site_settings_singleton CHECK (id = 'site-settings-1')
+);
+
+INSERT INTO public.site_settings (id) VALUES ('site-settings-1')
+ON CONFLICT (id) DO NOTHING;
+
+ALTER TABLE public.site_settings ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Public can read site settings" ON public.site_settings;
+DROP POLICY IF EXISTS "Authenticated users can update site settings" ON public.site_settings;
+DROP POLICY IF EXISTS "Authenticated users can insert site settings" ON public.site_settings;
+CREATE POLICY "Public can read site settings" ON public.site_settings FOR SELECT USING (true);
+CREATE POLICY "Authenticated users can update site settings" ON public.site_settings
+    FOR UPDATE USING (auth.role() = 'authenticated') WITH CHECK (auth.role() = 'authenticated');
+CREATE POLICY "Authenticated users can insert site settings" ON public.site_settings
+    FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+
+DROP TRIGGER IF EXISTS update_site_settings_updated_at ON public.site_settings;
+CREATE TRIGGER update_site_settings_updated_at
+    BEFORE UPDATE ON public.site_settings
+    FOR EACH ROW EXECUTE FUNCTION trigger_set_timestamp();
+
+COMMENT ON TABLE public.site_settings IS 'Singleton: site-wide toggles (hold page, future flags).';
+
+-- ============================================================================
 -- COMPLETION MESSAGE
 -- ============================================================================
 
@@ -468,6 +547,8 @@ BEGIN
     RAISE NOTICE '  - terms_and_conditions (terms and conditions content)';
     RAISE NOTICE '  - terms_of_use (terms of use content)';
     RAISE NOTICE '  - analytics (page view tracking and traffic data)';
+    RAISE NOTICE '  - site_integrations (GA4 / GTM / Meta Pixel / Hotjar IDs)';
+    RAISE NOTICE '  - site_settings (hold page + future global toggles)';
     RAISE NOTICE '';
     RAISE NOTICE 'Storage policies created for "site-images" bucket:';
     RAISE NOTICE '  ✓ Public read access';

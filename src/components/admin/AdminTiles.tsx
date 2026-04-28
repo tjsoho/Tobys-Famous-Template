@@ -23,6 +23,8 @@ import {
     faMagnifyingGlass,
     faImage,
     faChartBar,
+    faPlug,
+    faSign,
 } from "@fortawesome/free-solid-svg-icons";
 
 /* ************************************************************
@@ -142,6 +144,20 @@ const AdminTiles = () => {
             title: "Analytics",
             description: "View site analytics and traffic data",
             color: "bg-green-600 text-white"
+        },
+        {
+            href: "/admin/integrations",
+            icon: <FontAwesomeIcon icon={faPlug} />,
+            title: "Integrations",
+            description: "GA4, GTM, Meta Pixel & Hotjar IDs",
+            color: "bg-brand-teal text-white"
+        },
+        {
+            href: "/admin/holdpage",
+            icon: <FontAwesomeIcon icon={faSign} />,
+            title: "Hold Page",
+            description: "Coming-soon splash on/off",
+            color: "bg-brand-yellow text-brand-black"
         },
     ];
 

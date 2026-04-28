@@ -1,7 +1,14 @@
 import { MetadataRoute } from "next";
+import { fetchSiteSettings } from "@/data/site-settings";
 
-export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://brightleasing.com.au";
+export default async function robots(): Promise<MetadataRoute.Robots> {
+  const baseUrl =
+    process.env.NEXT_PUBLIC_BASE_URL || "https://example.com";
+  const settings = await fetchSiteSettings();
+
+  if (settings.holdpage_enabled) {
+    return { rules: [{ userAgent: "*", disallow: "/" }], host: baseUrl };
+  }
 
   return {
     rules: [
