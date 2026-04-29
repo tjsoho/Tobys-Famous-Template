@@ -12,6 +12,7 @@ import BubbleMenuMobile from "./BubbleMenuMobile";
 interface HeaderProps {
 	headerButtonText?: string;
 	siteLogo?: string;
+	siteLogoScale?: number;
 	socialMedia?: {
 		instagram?: string;
 		facebook?: string;
@@ -22,7 +23,7 @@ interface HeaderProps {
 	};
 }
 
-const Header = ({ headerButtonText = "Start in 60 Seconds", siteLogo = "/images/brightlogo.png", socialMedia }: HeaderProps) => {
+const Header = ({ headerButtonText = "Start in 60 Seconds", siteLogo = "/images/brightlogo.png", siteLogoScale = 1, socialMedia }: HeaderProps) => {
 	const [isLoaded, setIsLoaded] = useState(false);
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const pathname = usePathname();
@@ -50,13 +51,14 @@ const Header = ({ headerButtonText = "Start in 60 Seconds", siteLogo = "/images/
 					************************************************************/}
 					<div className="flex items-center">
 						<Link href="/" aria-label="Bright Leasing Home" className="flex items-center">
-							<Image 
-								src={siteLogo} 
-								alt="Bright Leasing Logo" 
-								width={120} 
-								height={100} 
-								className="h-10 lg:h-12 w-auto" 
-								priority 
+							<Image
+								src={siteLogo}
+								alt="Bright Leasing Logo"
+								width={120}
+								height={100}
+								className="h-10 lg:h-12 w-auto origin-left"
+								style={{ transform: `scale(${siteLogoScale})` }}
+								priority
 							/>
 						</Link>
 					</div>
@@ -129,11 +131,12 @@ const Header = ({ headerButtonText = "Start in 60 Seconds", siteLogo = "/images/
 				Desktop Bubble Menu
 			************************************************************/}
 			<div className="hidden lg:block">
-				<BubbleMenu 
-					isOpen={isMenuOpen} 
-					onClose={() => setIsMenuOpen(false)} 
+				<BubbleMenu
+					isOpen={isMenuOpen}
+					onClose={() => setIsMenuOpen(false)}
 					headerButtonText={headerButtonText}
 					siteLogo={siteLogo}
+					siteLogoScale={siteLogoScale}
 					socialMedia={socialMedia}
 				/>
 			</div>
@@ -142,11 +145,12 @@ const Header = ({ headerButtonText = "Start in 60 Seconds", siteLogo = "/images/
 				Mobile Bubble Menu
 			************************************************************/}
 			<div className="lg:hidden">
-				<BubbleMenuMobile 
-					isOpen={isMenuOpen} 
-					onClose={() => setIsMenuOpen(false)} 
+				<BubbleMenuMobile
+					isOpen={isMenuOpen}
+					onClose={() => setIsMenuOpen(false)}
 					headerButtonText={headerButtonText}
 					siteLogo={siteLogo}
+					siteLogoScale={siteLogoScale}
 					socialMedia={socialMedia}
 				/>
 			</div>

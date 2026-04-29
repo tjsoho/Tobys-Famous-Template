@@ -22,6 +22,7 @@ interface BubbleMenuProps {
     onClose: () => void;
     headerButtonText?: string;
     siteLogo?: string;
+    siteLogoScale?: number;
     socialMedia?: {
         instagram?: string;
         facebook?: string;
@@ -35,7 +36,7 @@ interface BubbleMenuProps {
 /* ************************************************************
                         COMPONENTS
 ************************************************************ */
-const BubbleMenu = ({ isOpen, onClose, headerButtonText = "Start In 60 Seconds", siteLogo = "/images/brightlogo.png", socialMedia }: BubbleMenuProps) => {
+const BubbleMenu = ({ isOpen, onClose, headerButtonText = "Start In 60 Seconds", siteLogo = "/images/brightlogo.png", siteLogoScale = 1, socialMedia }: BubbleMenuProps) => {
     return (
         <AnimatePresence>
             {isOpen && (
@@ -107,7 +108,14 @@ const BubbleMenu = ({ isOpen, onClose, headerButtonText = "Start In 60 Seconds",
                             transition={{ delay: 0.3, duration: 0.3 }}
                         >
                             <Link href="/" aria-label="Bright Leasing Home" className="flex items-center">
-                                <Image src={siteLogo} alt="Bright Leasing Logo" width={120} height={100} className="w-[150px] h-auto" />
+                                <Image
+                                    src={siteLogo}
+                                    alt="Bright Leasing Logo"
+                                    width={120}
+                                    height={100}
+                                    className="w-[150px] h-auto origin-left"
+                                    style={{ transform: `scale(${siteLogoScale})` }}
+                                />
                             </Link>
                         </motion.div>
 

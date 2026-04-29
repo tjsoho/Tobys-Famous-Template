@@ -148,6 +148,9 @@ export type ContactPageProps = BasePage<ContactPageContent>;
 export type FooterContent = {
   logoImage: string;
   siteLogo: string;
+  /** Display zoom for the site logo (1 = 100%). Applied via CSS transform
+   *  so it never affects layout / surrounding elements. */
+  siteLogoScale?: number;
   tagline: string;
   taglineBold: boolean;
   phone: string;
@@ -205,6 +208,7 @@ export const footerFallbackData: FooterProps = {
   content: {
     logoImage: "/images/bwlogo.png",
     siteLogo: "/images/brightlogo.png",
+    siteLogoScale: 1,
     tagline: "Intelligent car ownership\nmade simple",
     taglineBold: false,
     phone: "1300 988 938",

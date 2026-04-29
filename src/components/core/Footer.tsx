@@ -32,6 +32,7 @@ interface FooterProps {
     content: {
         logoImage: string;
         siteLogo?: string;
+        siteLogoScale?: number;
         tagline: string;
         taglineBold: boolean;
         phone: string;
@@ -144,7 +145,8 @@ const Footer = ({ content }: FooterProps) => {
                                 alt="Bright Leasing Logo"
                                 width={320}
                                 height={240}
-                                className="w-auto h-16"
+                                className="w-auto h-16 origin-left"
+                                style={{ transform: `scale(${content.siteLogoScale ?? 1})` }}
                             />
                         </Link>
                         <motion.p

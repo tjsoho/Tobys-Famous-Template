@@ -25,9 +25,10 @@ export default async function HeaderWrapper() {
                               RENDER
     ************************************************************ */
     return (
-        <Header 
+        <Header
             headerButtonText={homePage.content.headerButtonText}
             siteLogo={footerPage.content.siteLogo || "/images/brightlogo.png"}
+            siteLogoScale={footerPage.content.siteLogoScale ?? 1}
             socialMedia={footerPage.content.socialMedia}
         />
     );

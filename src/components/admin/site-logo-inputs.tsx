@@ -14,6 +14,11 @@ export default function SiteLogoInputs(props: FooterProps) {
 	const [siteLogo, setSiteLogo] = useState(
 		props.content.siteLogo || "/images/brightlogo.png",
 	);
+	const [siteLogoScale, setSiteLogoScale] = useState<number>(
+		typeof props.content.siteLogoScale === "number"
+			? props.content.siteLogoScale
+			: 1,
+	);
 	const [instagram, setInstagram] = useState(props.content.socialMedia?.instagram || "");
 	const [facebook, setFacebook] = useState(props.content.socialMedia?.facebook || "");
 	const [youtube, setYoutube] = useState(props.content.socialMedia?.youtube || "");
@@ -57,6 +62,7 @@ export default function SiteLogoInputs(props: FooterProps) {
 			content: {
 				...props.content,
 				siteLogo,
+				siteLogoScale,
 				socialMedia: {
 					instagram: ensureAbsoluteUrl(instagram),
 					facebook: ensureAbsoluteUrl(facebook),
@@ -181,6 +187,43 @@ export default function SiteLogoInputs(props: FooterProps) {
 											</p>
 										</div>
 
+										{/* Logo size (zoom) */}
+										<div className="bg-white border border-brand-yellow/30 rounded-lg p-4">
+											<div className="flex items-baseline justify-between mb-3">
+												<label className="block text-brand-black text-sm font-medium">
+													Logo size
+												</label>
+												<span className="text-xs text-brand-black/60 font-mono">
+													{Math.round(siteLogoScale * 100)}%
+												</span>
+											</div>
+											<input
+												type="range"
+												min={0.5}
+												max={3}
+												step={0.05}
+												value={siteLogoScale}
+												onChange={(e) => setSiteLogoScale(parseFloat(e.target.value))}
+												className="w-full accent-brand-yellow"
+											/>
+											<div className="flex justify-between mt-1 text-[11px] text-brand-black/50">
+												<span>50%</span>
+												<button
+													type="button"
+													onClick={() => setSiteLogoScale(1)}
+													className="hover:text-brand-black underline underline-offset-2"
+												>
+													Reset to 100%
+												</button>
+												<span>300%</span>
+											</div>
+											<p className="text-[11px] text-brand-black/55 mt-2">
+												Visual zoom only — the logo gets bigger or smaller without
+												changing the header / footer height. Layout around it stays
+												the same.
+											</p>
+										</div>
+
 										{/* Preview Section */}
 										<div className="mt-8 pt-8 border-t border-gray-200">
 											<h3 className="text-lg text-brand-black font-semibold mb-4">
@@ -195,7 +238,8 @@ export default function SiteLogoInputs(props: FooterProps) {
 															alt="Site Logo Preview - Header"
 															width={120}
 															height={48}
-															className="h-12 w-auto"
+															className="h-12 w-auto origin-left"
+															style={{ transform: `scale(${siteLogoScale})` }}
 														/>
 													</div>
 												</div>
@@ -207,7 +251,8 @@ export default function SiteLogoInputs(props: FooterProps) {
 															alt="Site Logo Preview - Admin Dashboard"
 															width={150}
 															height={64}
-															className="h-16 w-auto"
+															className="h-16 w-auto origin-left"
+															style={{ transform: `scale(${siteLogoScale})` }}
 														/>
 													</div>
 												</div>
@@ -219,7 +264,8 @@ export default function SiteLogoInputs(props: FooterProps) {
 															alt="Site Logo Preview - Footer"
 															width={120}
 															height={48}
-															className="h-12 w-auto"
+															className="h-12 w-auto origin-left"
+															style={{ transform: `scale(${siteLogoScale})` }}
 														/>
 													</div>
 												</div>
